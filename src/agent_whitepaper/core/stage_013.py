@@ -53,7 +53,9 @@ class TopDownInferenceEngine:
         updated = []
         deltas = bottom_up.propagated_signals
         for l in range(model.num_layers - 1):
-            pi = model.precisions[l]
+            # predictions[l] = r^{l+1}，维度 = layer_dims[l]
+            # precisions[l+1] 的维度也是 layer_dims[l]（child of layer l+1）
+            pi = model.precisions[l + 1]
             pw = pi @ predictions[l]
             precision_weighted.append(pw)
             pi_inv = np.linalg.inv(pi)

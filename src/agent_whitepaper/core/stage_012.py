@@ -100,22 +100,25 @@ class BottomUpInferenceEngine:
         """执行完整的自底向上传播。"""
         error_signals = self.compute_errors(model, observation, representations)
         L = model.num_layers
-        # error_signals 有 L+1 个元素: [e^0(obs), e^1, ..., e^{L-1}]
-        # 我们只取层内误差 e^1 到 e^{L-1}，以及观测误差 e^0 用于第一层
+        # error_signals 有 L+1 个元素: [e^0(obs), e^1, ..., e^{L-1}, e^L(prior)]
         # 从顶层到底层递归计算传播信号
         jacobians = []
         propagated = [None] * L
         precision_weighted = []
-        # 顶层初始化 δ^L = Π_L e^{L-1} (error_signals 索引为 L)
-        propagated[L - 1] = model.precisions[L - 1] @ error_signals[L]
-        precision_weighted.append(model.precisions[L - 1] @ error_signals[L])
+        # 顶层初始化 δ^L = Π_prior e^L (使用先验精度)
+        propagated[L - 1] = model.prior_precision @ error_signals[L]
+        precision_weighted.append(model.prior_precision @ error_signals[L])
         # 从高层到低层递归
+        # precisions[l+1] 对应 p(r^l | r^{l+1}) 的精度（child dim = layer_dims[l]）
         for l in range(L - 2, -1, -1):
             # J^{l+1} = ∂f^{l+1}/∂r^{l+1}，需要 r^{l+1} 作为输入点
             J = self.compute_jacobian(model, l + 1, representations[l + 1])
             jacobians.insert(0, J)
-            propagated[l] = model.precisions[l] @ error_signals[l + 1] + J @ propagated[l + 1]
-            precision_weighted.insert(0, model.precisions[l] @ error_signals[l + 1])
+            # error_signals[l+1] 是 r^l - f^{l+1}(r^{l+1})，维度 = layer_dims[l]
+            # precisions[l+1] 的维度也是 layer_dims[l]（child of layer l+1）
+            pw = model.precisions[l + 1] @ error_signals[l + 1]
+            propagated[l] = pw + J @ propagated[l + 1]
+            precision_weighted.insert(0, pw)
         total_complexity = L * max(model.layer_dims) ** 2 if model.layer_dims else 1
         return BottomUpPropagation(
             model=model,

@@ -24,6 +24,7 @@ class BottomUpPropagationV2:
 
     Attributes:
         model: 层级生成模型（v1 或 v2）
+        observation: 原始观测（用于重新计算传播信号）
         error_signals: 各层误差信号 (e^0, e^1, ..., e^L)
         propagated_signals: 传播信号 (δ^1, δ^2, ..., δ^L)
         jacobians: Jacobian矩阵 (J^1, J^2, ..., J^{L-1})
@@ -38,6 +39,7 @@ class BottomUpPropagationV2:
     precision_weighted_errors: tuple[np.ndarray, ...]
     total_complexity: int
     error_energies: tuple[float, ...]
+    observation: np.ndarray = None
 
 
 # ============================================================
@@ -134,23 +136,22 @@ class BottomUpInferenceEngineV2:
         # 顶层初始化 δ^L = Π_L e^{L-1} (error_signals 索引为 L)
         # 注意：对于 v2 模型，precisions 维度已修正为 child_dim
         if isinstance(model, HierarchicalGenerativeModelV2):
-            # v2: precisions[l] 对应第 l 层 child 的精度
-            # 顶层先验使用 prior_precision
+            # v2: 顶层先验使用 prior_precision
             propagated[L - 1] = model.prior_precision @ error_signals[L]
         else:
-            propagated[L - 1] = model.precisions[L - 1] @ error_signals[L]
+            # v1: 顶层先验也使用 prior_precision（修复后）
+            propagated[L - 1] = model.prior_precision @ error_signals[L]
         precision_weighted.append(propagated[L - 1].copy())
         # 从高层到低层递归
         for l in range(L - 2, -1, -1):
             J = self.compute_jacobian(model, l + 1, representations[l + 1])
             jacobians.insert(0, J)
             if isinstance(model, HierarchicalGenerativeModelV2):
-                # v2: precisions[l] 对应 child=layer_dims[l-1]（l>0）或 obs_dim（l=0）
-                # 但 error_signals[l+1] 是第 l+1 层的误差（child 是 layer_dims[l]）
-                # 所以 precision 应该用 precisions[l+1]
+                # v2: precisions[l+1] 对应 child=layer_dims[l]
                 pw = model.precisions[l + 1] @ error_signals[l + 1]
             else:
-                pw = model.precisions[l] @ error_signals[l + 1]
+                # v1: 修复后 precisions[l+1] 也对应 child=layer_dims[l]
+                pw = model.precisions[l + 1] @ error_signals[l + 1]
             propagated[l] = pw + J @ propagated[l + 1]
             precision_weighted.insert(0, pw)
         total_complexity = L * max(model.layer_dims) ** 2 if model.layer_dims else 1
@@ -162,6 +163,7 @@ class BottomUpInferenceEngineV2:
             precision_weighted_errors=tuple(precision_weighted),
             total_complexity=total_complexity,
             error_energies=error_energies,
+            observation=observation,
         )
 
     def check_stability(self, propagation: BottomUpPropagationV2) -> dict:

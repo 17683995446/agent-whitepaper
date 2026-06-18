@@ -397,14 +397,15 @@ class HierarchicalGenerativeModelV2:
         if observation.shape[0] != self.obs_dim:
             raise ValueError("观测维度不匹配")
 
-        # 观测对数似然
+        # 观测对数似然: p(o | r^1)
         obs_pred = self.obs_generative_fn.forward(representations[0])
         obs_error = observation - obs_pred
         log_likelihood = -0.5 * float(obs_error.T @ self.obs_precision @ obs_error)
 
-        # 各层条件对数似然
-        for l in range(self.num_layers):
-            child = representations[l - 1] if l > 0 else observation
+        # 各层条件对数似然: p(r^{l-1} | r^l) for l=1..L-1
+        # 注意：l=0 已由上面的观测对数似然处理（obs_generative_fn == generative_fns[0]）
+        for l in range(1, self.num_layers):
+            child = representations[l - 1]
             parent = representations[l]
             pred = self.generative_fns[l].forward(parent)
             error = child - pred

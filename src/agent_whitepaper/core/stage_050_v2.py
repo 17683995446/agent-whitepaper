@@ -147,6 +147,9 @@ class MultiLayerPredictorV2:
 
         Returns:
             (weight_grads, bias_grads, loss_value)
+
+        Raises:
+            ValueError: 当 loss_type="cross_entropy" 但输出层未使用 sigmoid 激活时
         """
         output, linear_outs, activated_outs = self.forward_with_cache(x)
 
@@ -155,7 +158,18 @@ class MultiLayerPredictorV2:
             loss = float(np.mean((output - target) ** 2))
             delta = 2 * (output - target) / output.shape[0]
         elif loss_type == "cross_entropy":
-            # 假设output已经过sigmoid
+            # cross_entropy 要求输出层使用 sigmoid 激活（输出 ∈ (0,1)）
+            last_activation = self.layers[-1].activation
+            if last_activation != ActivationType.SIGMOID:
+                raise ValueError(
+                    f"cross_entropy 损失要求输出层使用 SIGMOID 激活，"
+                    f"当前输出层激活为 {last_activation}。"
+                    f"请改用 SIGMOID 或切换为 mse 损失。"
+                )
+            # 数值安全检查
+            if np.any(output <= 0) or np.any(output >= 1):
+                # 截断到 (eps, 1-eps) 避免数值问题
+                output = np.clip(output, 1e-10, 1 - 1e-10)
             eps = 1e-10
             loss = -float(np.sum(target * np.log(output + eps) + (1 - target) * np.log(1 - output + eps)))
             delta = (output - target) / (output * (1 - output) + eps)

@@ -132,6 +132,8 @@ class WeightUpdateEngine:
         rates = []
         for l in range(model.num_layers):
             pi_inv_trace = float(np.trace(np.linalg.inv(model.precisions[l])))
-            dim = model.layer_dims[l]
+            # precisions[l] 的维度 = child dim（修复后）
+            # l=0: child=obs_dim, l>0: child=layer_dims[l-1]
+            dim = model.obs_dim if l == 0 else model.layer_dims[l - 1]
             rates.append(base_learning_rate * pi_inv_trace / dim)
         return tuple(rates)

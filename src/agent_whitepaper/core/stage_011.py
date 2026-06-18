@@ -113,13 +113,14 @@ class HierarchicalGenerativeModel:
             raise ValueError(
                 f"观测维度 {observation.shape[0]} 必须等于 obs_dim {self.obs_dim}"
             )
-        # 观测对数似然
+        # 观测对数似然: p(o | r^1)
         obs_pred = self.obs_generative_fn(representations[0])
         obs_error = observation - obs_pred
         log_likelihood = -0.5 * float(obs_error.T @ self.obs_precision @ obs_error)
-        # 各层条件对数似然
-        for l in range(self.num_layers):
-            child = representations[l - 1] if l > 0 else observation
+        # 各层条件对数似然: p(r^{l-1} | r^l) for l=1..L-1
+        # 注意：l=0 已由上面的观测对数似然处理（obs_generative_fn == generative_fns[0]）
+        for l in range(1, self.num_layers):
+            child = representations[l - 1]
             parent = representations[l]
             pred = self.generative_fns[l](parent, self.weights[l])
             error = child - pred
@@ -192,7 +193,10 @@ class HierarchicalModelBuilder:
             weight_init_fn(layer_dims[i - 1] if i > 0 else obs_dim, layer_dims[i])
             for i in range(num_layers)
         )
-        precisions = tuple(precision_init_fn(dim) for dim in layer_dims)
+        # precision 维度 = child 维度（误差维度）
+        # l=0: child=obs_dim, l>0: child=layer_dims[l-1]
+        precision_dims = [obs_dim] + list(layer_dims[:-1])
+        precisions = tuple(precision_init_fn(dim) for dim in precision_dims)
         obs_precision = precision_init_fn(obs_dim)
         prior_mean = np.zeros(layer_dims[-1])
         prior_precision = precision_init_fn(layer_dims[-1])

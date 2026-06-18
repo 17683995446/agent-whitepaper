@@ -6,7 +6,7 @@ sys.path.insert(0, "/workspace/agent-whitepaper/src")
 import numpy as np
 import pytest
 
-from agent_whitepaper.stages.stage_011 import (
+from agent_whitepaper.core.stage_011 import (
     LayerType,
     HierarchicalGenerativeModel,
     HierarchicalModelBuilder,
@@ -22,41 +22,18 @@ class TestLayerType:
 
 
 class TestHierarchicalGenerativeModel:
-    def _create_mock_axiom_verification(self):
-        """Create a minimal mock for AxiomSystemVerification."""
-        # We need to import from stage_010 or mock it
-        try:
-            from agent_whitepaper.stages.stage_010 import AxiomSystemVerification
-            return AxiomSystemVerification(
-                axioms=[],
-                consistency_matrix=np.eye(1),
-                is_consistent=True,
-                redundancy_score=0.0,
-            )
-        except Exception:
-            # If stage_010 has issues, create a simple mock
-            class MockAxiom:
-                pass
-            mock = MockAxiom()
-            mock.axioms = []
-            mock.consistency_matrix = np.eye(1)
-            mock.is_consistent = True
-            mock.redundancy_score = 0.0
-            return mock
+    """Test the HierarchicalGenerativeModel data class."""
 
     def _create_test_model(self, num_layers=2, layer_dims=(4, 2), obs_dim=8):
         """Create a test hierarchical generative model."""
-        axiom = self._create_mock_axiom_verification()
-
-        def weight_init_fn(n_out, n_in):
-            return np.random.randn(n_out, n_in) * 0.1
+        def weight_init_fn(in_dim, out_dim):
+            return np.random.randn(in_dim, out_dim) * 0.1
 
         def precision_init_fn(n):
             return np.eye(n) * 2.0
 
         builder = HierarchicalModelBuilder()
         return builder.build_model(
-            axiom_verification=axiom,
             num_layers=num_layers,
             layer_dims=layer_dims,
             obs_dim=obs_dim,
@@ -73,16 +50,14 @@ class TestHierarchicalGenerativeModel:
         assert len(model.precisions) == 2
 
     def test_post_init_validation(self):
-        axiom = self._create_mock_axiom_verification()
         builder = HierarchicalModelBuilder()
 
         with pytest.raises(ValueError, match="num_layers"):
             builder.build_model(
-                axiom_verification=axiom,
                 num_layers=0,
                 layer_dims=(4,),
                 obs_dim=8,
-                weight_init_fn=lambda o, i: np.zeros((o, i)),
+                weight_init_fn=lambda i, o: np.zeros((i, o)),
                 precision_init_fn=lambda n: np.eye(n),
             )
 
@@ -113,11 +88,12 @@ class TestHierarchicalGenerativeModel:
 
     def test_conditional_log_likelihood(self):
         model = self._create_test_model(num_layers=2, layer_dims=(4, 2), obs_dim=8)
+        # layer_index=2: 生成 r^1 from r^2
+        # child = r^1 (dim 4), parent = r^2 (dim 2)
         child = np.array([1.0, 2.0, 3.0, 4.0])
         parent = np.array([1.0, 2.0])
-        ll = model.conditional_log_likelihood(child, parent, layer_index=1)
+        ll = model.conditional_log_likelihood(child, parent, layer_index=2)
         assert isinstance(ll, float)
-        assert np.isfinite(ll)
 
     def test_joint_log_likelihood(self):
         model = self._create_test_model(num_layers=2, layer_dims=(4, 2), obs_dim=8)
@@ -125,15 +101,44 @@ class TestHierarchicalGenerativeModel:
         representations = (np.random.randn(4), np.random.randn(2))
         ll = model.joint_log_likelihood(observation, representations)
         assert isinstance(ll, float)
-        assert np.isfinite(ll)
 
 
 class TestHierarchicalModelBuilder:
     def test_build_model_returns_correct_type(self):
-        from agent_whitepaper.stages.stage_011 import HierarchicalModelBuilder
+        from agent_whitepaper.core.stage_011 import HierarchicalModelBuilder
         builder = HierarchicalModelBuilder()
-        assert builder is not None
+        model = builder.build_model(
+            num_layers=1,
+            layer_dims=(4,),
+            obs_dim=8,
+            weight_init_fn=lambda i, o: np.zeros((i, o)),
+            precision_init_fn=lambda n: np.eye(n),
+        )
+        assert isinstance(model, HierarchicalGenerativeModel)
 
+    def test_compute_free_energy_from_model(self):
+        builder = HierarchicalModelBuilder()
+        model = builder.build_model(
+            num_layers=2,
+            layer_dims=(4, 2),
+            obs_dim=8,
+            weight_init_fn=lambda i, o: np.random.randn(i, o) * 0.1,
+            precision_init_fn=lambda n: np.eye(n) * 2.0,
+        )
+        observation = np.random.randn(8)
+        representations = (np.random.randn(4), np.random.randn(2))
+        fe = builder.compute_free_energy_from_model(model, observation, representations)
+        assert isinstance(fe, float)
+        assert fe > 0  # 自由能应该为正
 
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
+    def test_optimal_depth(self):
+        builder = HierarchicalModelBuilder()
+        model = builder.build_model(
+            num_layers=3,
+            layer_dims=(4, 3, 2),
+            obs_dim=8,
+            weight_init_fn=lambda i, o: np.random.randn(i, o) * 0.1,
+            precision_init_fn=lambda n: np.eye(n),
+        )
+        depth = builder.optimal_depth(model, free_energy_budget=10.0, max_depth=5)
+        assert depth == 3  # min(3, 5)

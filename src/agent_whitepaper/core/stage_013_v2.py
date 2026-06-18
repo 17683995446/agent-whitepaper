@@ -69,7 +69,8 @@ class TopDownInferenceEngineV2:
             if isinstance(model, HierarchicalGenerativeModelV2):
                 pi = model.precisions[l + 1]  # v2: precision 对应 child dim
             else:
-                pi = model.precisions[l]
+                # v1: 修复后 precisions[l+1] 也对应 child dim
+                pi = model.precisions[l + 1]
             pw = pi @ predictions[l]
             precision_weighted.append(pw)
             try:
