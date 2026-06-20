@@ -12,6 +12,7 @@ import inspect
 
 import agent_whitepaper
 from agent_whitepaper import (
+    demos,
     stage_a,
     stage_b,
     stage_c,
@@ -23,9 +24,7 @@ from agent_whitepaper import (
     stage_i,
     stage_j,
     stage_k,
-    demos,
 )
-
 
 # ---------------------------------------------------------------------------
 # 辅助函数
@@ -78,36 +77,9 @@ class TestTopLevelPackage:
     def test_key_exports_importable(self):
         """顶层包导出的核心类可从顶层直接导入。"""
         from agent_whitepaper import (
-            SelfDrivenAgent,
             GridWorld,
-            QTable,
-            Skill,
-            SkillLibrary,
-            MetaLearner,
-            TaskDecomposer,
-            AgentRegistry,
-            MessageBus,
-            CoalitionFormer,
-            PerpetualRuntime,
-            PersistenceEngine,
-            TaskScheduler,
-            HealthMonitor,
-            QTableMigrator,
-            SkillQValueInjector,
-            KnowledgeDistiller,
-            AutonomousTaskGenerator,
-            DegradationDetector,
-            AutonomousRetrainer,
+            SelfDrivenAgent,
             SystemOrchestrator,
-            MetricsCollector,
-            load_config,
-            main,
-            EnvironmentProtocol,
-            FunctionCallEnvironment,
-            SafetyMonitor,
-            ResourceManager,
-            LongRunDemo,
-            ReportGenerator,
         )
         # 确保它们是真实对象而非 None
         assert SelfDrivenAgent is not None

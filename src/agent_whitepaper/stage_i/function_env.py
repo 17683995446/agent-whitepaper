@@ -19,10 +19,12 @@
     2. 自由顺序：任意顺序都行（如独立任务集合）
 """
 
-from typing import Optional, Tuple, List, Dict
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
 from agent_whitepaper.stage_a.action_space import DiscreteActionSpace
+
 from .environment_interface import EnvironmentProtocol
 
 

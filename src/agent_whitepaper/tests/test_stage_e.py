@@ -8,19 +8,21 @@
 """
 
 import numpy as np
-import pytest
 
-from agent_whitepaper.stage_a.policy import QTable
-from agent_whitepaper.stage_a.environment import GridWorld
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
-from agent_whitepaper.stage_b.skill_abstractor import Skill, SkillLibrary, SkillAbstractor
-from agent_whitepaper.stage_e.qtable_migration import (
-    QTableSnapshot, QTableMigrator, QTableKnowledgeBase,
-)
-from agent_whitepaper.stage_e.skill_injector import SkillQValueInjector, InjectionResult
+from agent_whitepaper.stage_a.environment import GridWorld
+from agent_whitepaper.stage_a.policy import QTable
+from agent_whitepaper.stage_b.skill_abstractor import Skill, SkillLibrary
 from agent_whitepaper.stage_e.knowledge_distiller import (
-    KnowledgeDistiller, DistillationResult, CollectiveLearningCoordinator,
+    CollectiveLearningCoordinator,
+    KnowledgeDistiller,
 )
+from agent_whitepaper.stage_e.qtable_migration import (
+    QTableKnowledgeBase,
+    QTableMigrator,
+    QTableSnapshot,
+)
+from agent_whitepaper.stage_e.skill_injector import SkillQValueInjector
 
 
 # ============================================================
@@ -241,7 +243,7 @@ class TestKnowledgeDistiller:
         student._table = np.zeros((5, 3))
 
         distiller = KnowledgeDistiller()
-        result = distiller.distill([s1, s2], student, strategy="weighted", injection_alpha=1.0)
+        distiller.distill([s1, s2], student, strategy="weighted", injection_alpha=1.0)
 
         # 加权: 0.3*2 + 0.7*4 = 3.4 (归一化后)
         # weights = [0.3, 0.7] / 1.0 = [0.3, 0.7]

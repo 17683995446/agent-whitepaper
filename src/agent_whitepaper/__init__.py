@@ -27,29 +27,29 @@
     LongRunDemo, ReportGenerator  -- 阶段K
 """
 
-from .stage_a import SelfDrivenAgent, GridWorld, QTable
-from .stage_b import Skill, SkillLibrary, MetaLearner, TaskDecomposer
-from .stage_c import AgentRegistry, MessageBus, CoalitionFormer
+from .stage_a import GridWorld, QTable, SelfDrivenAgent
+from .stage_b import MetaLearner, Skill, SkillLibrary, TaskDecomposer
+from .stage_c import AgentRegistry, CoalitionFormer, MessageBus
 from .stage_d import (
+    HealthMonitor,
     PerpetualRuntime,
     PersistenceEngine,
     TaskScheduler,
-    HealthMonitor,
 )
 from .stage_e import (
+    KnowledgeDistiller,
     QTableMigrator,
     SkillQValueInjector,
-    KnowledgeDistiller,
 )
 from .stage_f import (
+    AutonomousRetrainer,
     AutonomousTaskGenerator,
     DegradationDetector,
-    AutonomousRetrainer,
 )
-from .stage_g import SystemOrchestrator, MetricsCollector
+from .stage_g import MetricsCollector, SystemOrchestrator
 from .stage_h import load_config, main
 from .stage_i import EnvironmentProtocol, FunctionCallEnvironment
-from .stage_j import SafetyMonitor, ResourceManager
+from .stage_j import ResourceManager, SafetyMonitor
 from .stage_k import LongRunDemo, ReportGenerator
 
 __all__ = [

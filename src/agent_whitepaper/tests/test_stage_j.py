@@ -8,17 +8,20 @@
 5. 端到端：安全+资源保护的运行
 """
 
-import numpy as np
-import pytest
-import time
 
-from agent_whitepaper.stage_j.safety_bounds import (
-    SafetyMonitor, SafetyConfig, SafetyLevel, SafetyViolation,
-    SafeActionFilter,
-)
+import numpy as np
+
 from agent_whitepaper.stage_j.resource_manager import (
-    ResourceManager, ResourceLimits, ResourceUsage,
-    BackpressureLevel, ResourceAwareController,
+    BackpressureLevel,
+    ResourceAwareController,
+    ResourceLimits,
+    ResourceManager,
+    ResourceUsage,
+)
+from agent_whitepaper.stage_j.safety_bounds import (
+    SafeActionFilter,
+    SafetyConfig,
+    SafetyMonitor,
 )
 
 
@@ -366,7 +369,6 @@ class TestEndToEnd:
         """安全监控器与Agent运行集成。"""
         from agent_whitepaper.stage_a.agent import SelfDrivenAgent
         from agent_whitepaper.stage_a.environment import GridWorld
-        from agent_whitepaper.stage_a.action_space import DiscreteActionSpace
 
         env = GridWorld(size=4, seed=42)
         agent = SelfDrivenAgent(env.action_space, n_states=16, seed=42)
@@ -379,7 +381,7 @@ class TestEndToEnd:
             state_idx = agent.q_table.state_to_index(obs, 4)
             for step in range(20):
                 # 安全过滤
-                q_values = agent.q_table.get(state_idx)
+                agent.q_table.get(state_idx)
                 action = agent.policy.select_action(
                     agent.q_table, state_idx, agent.drives, agent._rng
                 )

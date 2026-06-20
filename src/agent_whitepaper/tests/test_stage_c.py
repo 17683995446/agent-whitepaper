@@ -9,27 +9,36 @@
 6. 端到端：多Agent协作完成任务
 """
 
-import numpy as np
-import pytest
 import time
 
-from agent_whitepaper.stage_c.registry import (
-    AgentRegistry, AgentRegistration, AgentCapability, AgentStatus,
+import numpy as np
+
+from agent_whitepaper.stage_b.skill_abstractor import Skill, SkillLibrary
+from agent_whitepaper.stage_b.task_decomposer import TaskDecomposer
+from agent_whitepaper.stage_c.coalition import (
+    CoalitionFormer,
+    CoalitionStatus,
 )
 from agent_whitepaper.stage_c.message_bus import (
-    MessageBus, Message, MessageType, MessageQueue,
+    Message,
+    MessageBus,
+    MessageQueue,
+    MessageType,
+)
+from agent_whitepaper.stage_c.registry import (
+    AgentCapability,
+    AgentRegistry,
+    AgentStatus,
 )
 from agent_whitepaper.stage_c.role_assigner import (
-    RoleAssigner, RoleAssignment, Role, TeamConfiguration, ROLE_DRIVE_PROFILES,
-)
-from agent_whitepaper.stage_c.coalition import (
-    Coalition, CoalitionStatus, CoalitionFormer,
+    Role,
+    RoleAssigner,
+    RoleAssignment,
+    TeamConfiguration,
 )
 from agent_whitepaper.stage_c.shared_skills import (
-    SharedSkill, SharedSkillLibrary,
+    SharedSkillLibrary,
 )
-from agent_whitepaper.stage_b.skill_abstractor import Skill, SkillLibrary
-from agent_whitepaper.stage_b.task_decomposer import TaskDecomposer, Task
 
 
 # ============================================================

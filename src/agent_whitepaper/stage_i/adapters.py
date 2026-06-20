@@ -12,12 +12,12 @@
     这就是"一个大脑，多个世界"。
 """
 
-from typing import Optional, Tuple, List
-import numpy as np
+from typing import List, Optional, Tuple
 
+from agent_whitepaper.stage_a.action_space import DiscreteActionSpace
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.memory import Episode, Transition
-from agent_whitepaper.stage_a.action_space import DiscreteActionSpace
+
 from .environment_interface import EnvironmentAdapter, StateEncoder
 
 

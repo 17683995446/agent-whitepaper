@@ -14,8 +14,9 @@
     而是随经验不断优化的活体知识。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Tuple
+from dataclasses import dataclass
+from typing import List, Optional, Tuple
+
 import numpy as np
 
 from .skill_abstractor import Skill, SkillLibrary

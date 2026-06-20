@@ -17,32 +17,31 @@
     编排器是系统的"大脑皮层"，协调各脑区协同工作。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
-from enum import Enum
 import time
 import traceback
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
 # 阶段A：单Agent闭环
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.environment import GridWorld
-from agent_whitepaper.stage_a.policy import DriveState
+from agent_whitepaper.stage_b.meta_learner import MetaLearner
 
 # 阶段B：技能增强与长任务
-from agent_whitepaper.stage_b.skill_abstractor import SkillLibrary, SkillAbstractor
-from agent_whitepaper.stage_b.meta_learner import MetaLearner
+from agent_whitepaper.stage_b.skill_abstractor import SkillAbstractor, SkillLibrary
 from agent_whitepaper.stage_b.subgoal_manager import LongTaskExecutor
-from agent_whitepaper.stage_b.task_decomposer import Task
+from agent_whitepaper.stage_c.coalition import CoalitionFormer, CoalitionStatus
+from agent_whitepaper.stage_c.message_bus import MessageBus
 
 # 阶段C：多Agent协作
-from agent_whitepaper.stage_c.registry import AgentRegistry, AgentCapability
-from agent_whitepaper.stage_c.message_bus import MessageBus
-from agent_whitepaper.stage_c.coalition import CoalitionFormer, CoalitionStatus
+from agent_whitepaper.stage_c.registry import AgentCapability, AgentRegistry
+from agent_whitepaper.stage_d.health_monitor import HealthMonitor, HealthStatus
 
 # 阶段D：永续运行时
 from agent_whitepaper.stage_d.persistence import PersistenceEngine
-from agent_whitepaper.stage_d.health_monitor import HealthMonitor, HealthStatus
 from agent_whitepaper.stage_d.scheduler import TaskScheduler
 
 # 阶段E：技能迁移与真增强
@@ -50,10 +49,8 @@ from agent_whitepaper.stage_e.knowledge_distiller import CollectiveLearningCoord
 
 # 阶段F：自主进化
 from agent_whitepaper.stage_f.autonomous_generator import AutonomousTaskGenerator
-from agent_whitepaper.stage_f.degradation_detector import DegradationDetector
 from agent_whitepaper.stage_f.autonomous_retrainer import (
-    AutonomousRetrainer, CheckpointManager, AutonomousEvolutionController,
-    RecoveryStrategy,
+    AutonomousEvolutionController,
 )
 
 # 阶段G：可观测性

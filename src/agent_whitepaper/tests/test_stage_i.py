@@ -11,17 +11,19 @@
 import numpy as np
 import pytest
 
+from agent_whitepaper.stage_a.environment import GridWorld
+from agent_whitepaper.stage_i.adapters import (
+    MultiEnvironmentTrainer,
+    create_universal_agent,
+    replay_learning_universal,
+    run_episode_universal,
+)
 from agent_whitepaper.stage_i.environment_interface import (
-    EnvironmentProtocol, StateEncoder, GridWorldStateEncoder,
-    BitmapStateEncoder, EnvironmentAdapter,
+    BitmapStateEncoder,
+    EnvironmentAdapter,
+    GridWorldStateEncoder,
 )
 from agent_whitepaper.stage_i.function_env import FunctionCallEnvironment
-from agent_whitepaper.stage_i.adapters import (
-    run_episode_universal, replay_learning_universal,
-    create_universal_agent, MultiEnvironmentTrainer,
-)
-from agent_whitepaper.stage_a.agent import SelfDrivenAgent
-from agent_whitepaper.stage_a.environment import GridWorld
 
 
 # ============================================================
@@ -360,7 +362,7 @@ class TestGeneralization:
 
         # 验证：从初始状态，最优动作应该是0（第一个函数）
         # 初始状态索引=0（无函数完成）
-        best_action = agent.q_table.best_action(0)
+        agent.q_table.best_action(0)
         # 学会后应该倾向于调用0（但探索率可能影响，只验证Q值非零）
         q_values = agent.q_table.get(0)
         assert np.any(q_values != 0), "初始状态Q值全为零，未学习"

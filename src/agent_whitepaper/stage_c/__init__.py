@@ -20,25 +20,25 @@
     SharedSkillLibrary: 共享技能库
 """
 
+from .coalition import Coalition, CoalitionFormer, CoalitionStatus
+from .message_bus import (
+    Message,
+    MessageBus,
+    MessageQueue,
+    MessageType,
+)
 from .registry import (
-    AgentStatus,
     AgentCapability,
     AgentRegistration,
     AgentRegistry,
-)
-from .message_bus import (
-    MessageType,
-    Message,
-    MessageQueue,
-    MessageBus,
+    AgentStatus,
 )
 from .role_assigner import (
     Role,
+    RoleAssigner,
     RoleAssignment,
     TeamConfiguration,
-    RoleAssigner,
 )
-from .coalition import CoalitionStatus, Coalition, CoalitionFormer
 from .shared_skills import SharedSkill, SharedSkillLibrary
 
 __all__ = [

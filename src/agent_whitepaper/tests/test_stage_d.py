@@ -9,22 +9,28 @@
 """
 
 import os
-import time
 import tempfile
-import numpy as np
-import pytest
+import time
 
-from agent_whitepaper.stage_d.persistence import PersistenceEngine
-from agent_whitepaper.stage_d.scheduler import (
-    TaskScheduler, TaskGenerator, ScheduledTask, ScheduledTaskStatus,
-)
+import numpy as np
+
 from agent_whitepaper.stage_d.health_monitor import (
-    HealthMonitor, HealthStatus, CircuitBreaker, safe_execute,
+    CircuitBreaker,
+    HealthMonitor,
+    HealthStatus,
+    safe_execute,
 )
+from agent_whitepaper.stage_d.persistence import PersistenceEngine
 from agent_whitepaper.stage_d.runtime import (
-    PerpetualRuntime, RuntimeConfig, RuntimeStatus,
+    PerpetualRuntime,
+    RuntimeConfig,
+    RuntimeStatus,
 )
-from agent_whitepaper.stage_b.task_decomposer import TaskDecomposer
+from agent_whitepaper.stage_d.scheduler import (
+    ScheduledTaskStatus,
+    TaskGenerator,
+    TaskScheduler,
+)
 
 
 # ============================================================
@@ -157,7 +163,7 @@ class TestScheduler:
         gen = TaskGenerator(grid_size=5, seed=42)
         task = gen.generate_task()
         task_id = scheduler.submit_task(task)
-        scheduled = scheduler.get_next_task("agent_001")
+        scheduler.get_next_task("agent_001")
         scheduler.complete_task(task_id, {"completion_rate": 1.0})
         assert scheduler.get_stats()["total_completed"] == 1
 
@@ -166,15 +172,15 @@ class TestScheduler:
         gen = TaskGenerator(grid_size=5, seed=42)
         task = gen.generate_task()
         task_id = scheduler.submit_task(task)
-        scheduled = scheduler.get_next_task("agent_001")
+        scheduler.get_next_task("agent_001")
         # 第一次失败 → 重试
         scheduler.fail_task(task_id, "test_error")
         assert scheduler.get_queue_size() == 1  # 重新入队
         # 第二次
-        scheduled = scheduler.get_next_task("agent_001")
+        scheduler.get_next_task("agent_001")
         scheduler.fail_task(task_id, "test_error")
         # 第三次（超过max_retries=2）
-        scheduled = scheduler.get_next_task("agent_001")
+        scheduler.get_next_task("agent_001")
         result = scheduler.fail_task(task_id, "test_error")
         assert result is False  # 彻底失败
         assert scheduler.get_stats()["total_failed"] == 1
@@ -395,7 +401,7 @@ class TestEndToEndD:
         runtime.run()
 
         report = runtime.get_status_report()
-        print(f"\n永续运行报告:")
+        print("\n永续运行报告:")
         print(f"  总迭代: {report['total_iterations']}")
         print(f"  完成任务: {report['total_tasks_completed']}")
         print(f"  失败任务: {report['total_tasks_failed']}")

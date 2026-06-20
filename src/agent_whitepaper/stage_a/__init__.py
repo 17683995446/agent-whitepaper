@@ -13,11 +13,11 @@
     DriveState: 驱力状态
 """
 
-from .action_space import DiscreteActionSpace, ActionSpace
+from .action_space import ActionSpace, DiscreteActionSpace
+from .agent import AgentStats, SelfDrivenAgent
 from .environment import Environment, GridWorld, Transition
-from .memory import EpisodicBuffer, Episode
-from .policy import QTable, DriveBasedPolicy, DriveState
-from .agent import SelfDrivenAgent, AgentStats
+from .memory import Episode, EpisodicBuffer
+from .policy import DriveBasedPolicy, DriveState, QTable
 
 __all__ = [
     "DiscreteActionSpace",

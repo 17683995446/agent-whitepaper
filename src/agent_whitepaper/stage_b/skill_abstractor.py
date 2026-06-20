@@ -15,13 +15,12 @@
     - 实现了"自主增强技能"的目标
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Tuple, Dict
-from collections import Counter
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
 from agent_whitepaper.stage_a.memory import Episode
-from agent_whitepaper.stage_a.environment import Transition
 
 
 # ============================================================

@@ -9,14 +9,16 @@
 """
 
 import os
-import pytest
-import tempfile
 
+import pytest
+
+from agent_whitepaper.stage_h.cli import build_parser, main
 from agent_whitepaper.stage_h.config import (
-    ConfigLoader, ConfigValidationError, load_config, DEFAULT_CONFIG,
+    DEFAULT_CONFIG,
+    ConfigLoader,
+    ConfigValidationError,
+    load_config,
 )
-from agent_whitepaper.stage_h.cli import main, build_parser
-from agent_whitepaper.stage_g.orchestrator import OrchestratorConfig
 
 
 # ============================================================
@@ -63,7 +65,7 @@ class TestConfigLoader:
 
     def test_generate_default_yaml(self, tmp_path):
         try:
-            import yaml
+            import yaml  # noqa: F401
         except ImportError:
             pytest.skip("PyYAML未安装")
 

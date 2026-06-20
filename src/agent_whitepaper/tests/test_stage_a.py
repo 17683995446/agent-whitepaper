@@ -13,19 +13,26 @@ import numpy as np
 import pytest
 
 from agent_whitepaper.stage_a.action_space import (
-    DiscreteActionSpace, ContinuousActionSpace, ActionSpaceType,
-    encode_action, decode_action,
+    ActionSpaceType,
+    ContinuousActionSpace,
+    DiscreteActionSpace,
+    decode_action,
+    encode_action,
 )
+from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.environment import (
-    Environment, Transition, GridWorld,
+    GridWorld,
+    Transition,
 )
 from agent_whitepaper.stage_a.memory import (
-    EpisodicBuffer, Episode,
+    Episode,
+    EpisodicBuffer,
 )
 from agent_whitepaper.stage_a.policy import (
-    QTable, DriveState, DriveBasedPolicy,
+    DriveBasedPolicy,
+    DriveState,
+    QTable,
 )
-from agent_whitepaper.stage_a.agent import SelfDrivenAgent, AgentStats
 
 
 # ============================================================

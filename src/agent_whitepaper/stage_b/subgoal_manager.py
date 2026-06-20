@@ -13,11 +13,11 @@
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, List, Tuple, Dict
-from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
-from .task_decomposer import Task, SubGoal, SubGoalStatus
+from .task_decomposer import SubGoal, SubGoalStatus, Task
 
 
 # ============================================================
@@ -282,7 +282,6 @@ class LongTaskExecutor:
             # 运行一个情节来尝试完成当前子目标
             obs = env.reset()
             steps_in_goal = 0
-            goal_start_reward = progress.total_reward
 
             for step in range(current_goal.max_steps):
                 # Agent感知并行动

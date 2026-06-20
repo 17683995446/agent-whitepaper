@@ -8,7 +8,7 @@
     SystemOrchestrator: 全系统编排器（A-F闭环编排）
 """
 
-from .metrics import MetricsSnapshot, MetricsCollector
+from .metrics import MetricsCollector, MetricsSnapshot
 from .orchestrator import (
     OrchestratorConfig,
     OrchestratorStatus,

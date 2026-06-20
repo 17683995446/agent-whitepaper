@@ -13,13 +13,15 @@
 10. 端到端：完整自主进化系统
 """
 
+
 import numpy as np
 import pytest
-import time
 
-from agent_whitepaper.stage_g.metrics import MetricsSnapshot, MetricsCollector
+from agent_whitepaper.stage_g.metrics import MetricsCollector, MetricsSnapshot
 from agent_whitepaper.stage_g.orchestrator import (
-    SystemOrchestrator, OrchestratorConfig, OrchestratorStatus,
+    OrchestratorConfig,
+    OrchestratorStatus,
+    SystemOrchestrator,
 )
 
 
@@ -513,7 +515,7 @@ class TestEndToEnd:
                     late_success.append(snap.avg_success_rate)
 
         # 后期Q表应比初期更丰富（学习发生）
-        report = orch.get_metrics()
+        orch.get_metrics()
         q_summary = orch.metrics.get_summary("total_q_entries")
         assert q_summary["last"] >= q_summary["first"], "Q表未增长"
 

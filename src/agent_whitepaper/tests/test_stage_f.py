@@ -7,23 +7,26 @@
 4. 端到端：永续运行+自主进化
 """
 
-import numpy as np
-import pytest
-import time
 
-from agent_whitepaper.stage_f.autonomous_generator import (
-    AutonomousTaskGenerator, TaskDifficulty, AgentCapabilityAssessment,
-)
-from agent_whitepaper.stage_f.degradation_detector import (
-    DegradationDetector, DegradationType, DegradationReport,
-)
-from agent_whitepaper.stage_f.autonomous_retrainer import (
-    AutonomousRetrainer, RecoveryStrategy, RecoveryResult,
-    CheckpointManager, AutonomousEvolutionController,
-)
+import numpy as np
+
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.environment import GridWorld
 from agent_whitepaper.stage_e.knowledge_distiller import CollectiveLearningCoordinator
+from agent_whitepaper.stage_f.autonomous_generator import (
+    AutonomousTaskGenerator,
+    TaskDifficulty,
+)
+from agent_whitepaper.stage_f.autonomous_retrainer import (
+    AutonomousEvolutionController,
+    AutonomousRetrainer,
+    CheckpointManager,
+    RecoveryStrategy,
+)
+from agent_whitepaper.stage_f.degradation_detector import (
+    DegradationDetector,
+    DegradationType,
+)
 
 
 # ============================================================
@@ -211,7 +214,8 @@ class TestEndToEndF:
     def test_perpetual_evolution(self):
         """端到端：系统持续运行并自主进化。"""
         from agent_whitepaper.stage_d.runtime import (
-            PerpetualRuntime, RuntimeConfig, RuntimeStatus,
+            PerpetualRuntime,
+            RuntimeConfig,
         )
 
         config = RuntimeConfig(
@@ -225,7 +229,7 @@ class TestEndToEndF:
         runtime.run()
 
         report = runtime.get_status_report()
-        print(f"\n永续进化报告:")
+        print("\n永续进化报告:")
         print(f"  迭代次数: {report['total_iterations']}")
         print(f"  完成任务: {report['total_tasks_completed']}")
         print(f"  总情节数: {report['total_episodes']}")
@@ -314,7 +318,7 @@ class TestEndToEndF:
         student_rate = sum(student.stats.recent_successes[-15:]) / 15
         baseline_rate = sum(baseline.stats.recent_successes[-15:]) / 15
 
-        print(f"\n技能迁移效果:")
+        print("\n技能迁移效果:")
         print(f"  教师成功率: {teacher_rate:.0%}")
         print(f"  基线成功率(30情节): {baseline_rate:.0%}")
         print(f"  学生成功率(30情节): {student_rate:.0%}")

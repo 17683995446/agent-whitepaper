@@ -14,8 +14,9 @@
     - 采样通过显式传入rng，保证可复现
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Tuple
+from dataclasses import dataclass
+from typing import List, Tuple
+
 import numpy as np
 
 from .environment import Transition

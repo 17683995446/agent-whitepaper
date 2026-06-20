@@ -17,14 +17,16 @@
     这实现了真正的"集体智慧"：1+1>2。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
 from agent_whitepaper.stage_a.policy import QTable
-from .qtable_migration import QTableSnapshot, QTableMigrator, QTableKnowledgeBase
-from .skill_injector import SkillQValueInjector
 from agent_whitepaper.stage_b.skill_abstractor import SkillLibrary
+
+from .qtable_migration import QTableKnowledgeBase, QTableSnapshot
+from .skill_injector import SkillQValueInjector
 
 
 # ============================================================

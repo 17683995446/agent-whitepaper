@@ -11,11 +11,10 @@
     这是多Agent系统的基础设施，类似于微服务中的服务注册发现。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
-from enum import Enum
 import time
-import numpy as np
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, List, Optional, Tuple
 
 
 # ============================================================
@@ -50,10 +49,10 @@ class AgentCapability:
 
     def __post_init__(self):
         if not (0 <= self.performance_score <= 1):
-            raise ValueError(f"performance_score 必须 ∈ [0,1]")
+            raise ValueError("performance_score 必须 ∈ [0,1]")
         for d in self.drive_profile:
             if not (0 <= d <= 1):
-                raise ValueError(f"驱力值必须 ∈ [0,1]")
+                raise ValueError("驱力值必须 ∈ [0,1]")
 
 
 # ============================================================

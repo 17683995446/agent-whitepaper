@@ -16,13 +16,14 @@
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
+
 import numpy as np
 
 from .action_space import DiscreteActionSpace
 from .environment import Environment, Transition
-from .memory import EpisodicBuffer, Episode
-from .policy import QTable, DriveBasedPolicy, DriveState
+from .memory import Episode, EpisodicBuffer
+from .policy import DriveBasedPolicy, DriveState, QTable
 
 
 # ============================================================

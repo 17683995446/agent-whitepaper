@@ -12,18 +12,18 @@
     cmd_status: status子命令
 """
 
-from .config import (
-    ConfigValidationError,
-    ConfigLoader,
-    load_config,
-)
 from .cli import (
     build_parser,
-    main,
+    cmd_demo,
     cmd_init,
     cmd_run,
-    cmd_demo,
     cmd_status,
+    main,
+)
+from .config import (
+    ConfigLoader,
+    ConfigValidationError,
+    load_config,
 )
 
 __all__ = [

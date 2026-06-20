@@ -10,26 +10,32 @@
 """
 
 import numpy as np
-import pytest
 
-from agent_whitepaper.stage_a.environment import GridWorld, Transition
-from agent_whitepaper.stage_a.memory import Episode, EpisodicBuffer
-from agent_whitepaper.stage_a.action_space import DiscreteActionSpace
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
+from agent_whitepaper.stage_a.environment import GridWorld, Transition
+from agent_whitepaper.stage_a.memory import Episode
+from agent_whitepaper.stage_b.meta_learner import (
+    MetaLearner,
+    MetaParameters,
+)
 from agent_whitepaper.stage_b.skill_abstractor import (
-    Skill, SkillLibrary, SkillAbstractor,
+    Skill,
+    SkillAbstractor,
+    SkillLibrary,
 )
 from agent_whitepaper.stage_b.skill_refiner import (
-    SkillExecutionRecord, SkillRefiner,
-)
-from agent_whitepaper.stage_b.meta_learner import (
-    MetaParameters, MetaLearner, LearningProgress,
-)
-from agent_whitepaper.stage_b.task_decomposer import (
-    Task, SubGoal, SubGoalStatus, TaskDecomposer,
+    SkillExecutionRecord,
+    SkillRefiner,
 )
 from agent_whitepaper.stage_b.subgoal_manager import (
-    SubGoalStateMachine, TaskProgress, LongTaskExecutor,
+    LongTaskExecutor,
+    SubGoalStateMachine,
+)
+from agent_whitepaper.stage_b.task_decomposer import (
+    SubGoal,
+    SubGoalStatus,
+    Task,
+    TaskDecomposer,
 )
 
 
@@ -383,7 +389,6 @@ class TestEndToEndB:
     def test_meta_learning_improves(self):
         """元学习应改善学习效率。"""
         learner = MetaLearner(window_size=10, adaptation_rate=0.15)
-        initial_params = learner.params
 
         # 模拟学习过程
         for i in range(30):

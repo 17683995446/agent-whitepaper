@@ -15,21 +15,21 @@
 """
 
 from .autonomous_generator import (
-    TaskDifficulty,
     AgentCapabilityAssessment,
     AutonomousTaskGenerator,
-)
-from .degradation_detector import (
-    DegradationType,
-    DegradationReport,
-    DegradationDetector,
+    TaskDifficulty,
 )
 from .autonomous_retrainer import (
-    RecoveryStrategy,
-    RecoveryResult,
-    CheckpointManager,
-    AutonomousRetrainer,
     AutonomousEvolutionController,
+    AutonomousRetrainer,
+    CheckpointManager,
+    RecoveryResult,
+    RecoveryStrategy,
+)
+from .degradation_detector import (
+    DegradationDetector,
+    DegradationReport,
+    DegradationType,
 )
 
 __all__ = [

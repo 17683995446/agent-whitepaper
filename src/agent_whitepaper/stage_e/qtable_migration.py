@@ -11,15 +11,14 @@
     Agent A学会的"如何做"直接变成Agent B的初始能力。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
-import numpy as np
-import json
-import pickle
 import base64
+import pickle
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+
+import numpy as np
 
 from agent_whitepaper.stage_a.policy import QTable
-from agent_whitepaper.stage_b.skill_abstractor import Skill
 
 
 # ============================================================

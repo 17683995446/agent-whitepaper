@@ -17,10 +17,11 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple
+
 import numpy as np
 
-from agent_whitepaper.stage_a.action_space import ActionSpace, DiscreteActionSpace
+from agent_whitepaper.stage_a.action_space import ActionSpace
 
 
 # ============================================================

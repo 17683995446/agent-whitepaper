@@ -11,12 +11,11 @@
     配置是"声明式"的——描述"想要什么"而非"怎么做"。
 """
 
-from dataclasses import dataclass, field, asdict
-from typing import Optional, Dict, Any
 import os
+from dataclasses import asdict
+from typing import Any, Dict, Optional
 
 from agent_whitepaper.stage_g.orchestrator import OrchestratorConfig
-
 
 # ============================================================
 # 默认配置
@@ -83,7 +82,7 @@ class ConfigLoader:
         except ImportError as e:
             raise ImportError("需要PyYAML来加载YAML配置: pip install pyyaml") from e
 
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         return self.from_dict(data)
 

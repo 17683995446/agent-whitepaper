@@ -14,10 +14,10 @@
     指标是时间序列，记录系统"成长曲线"，让"自主进化"可被验证。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
-import time
 import json
+import time
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
 
 # ============================================================

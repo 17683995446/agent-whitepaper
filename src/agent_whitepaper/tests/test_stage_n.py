@@ -9,7 +9,6 @@
 6. 传递依赖计算正确
 """
 
-import os
 import re
 from pathlib import Path
 
@@ -18,13 +17,11 @@ import pytest
 from agent_whitepaper._dependencies import (
     STAGE_DEPENDENCIES,
     TRANSITIVE_DEPENDENCIES,
-    get_direct_dependencies,
-    get_transitive_dependencies,
     get_dependents,
+    get_transitive_dependencies,
     has_cycle,
     topological_order,
 )
-
 
 # ---------------------------------------------------------------------------
 # 扫描实际 import 语句，构建实际依赖图
@@ -192,11 +189,11 @@ class TestTransitiveDependencies:
         }
 
     def test_stage_k_transitive(self):
-        """stage_k 传递依赖包含 stage_g 和 stage_h 及其依赖。"""
+        """stage_k 传递依赖包含 stage_g 及其所有下层依赖。"""
         trans = get_transitive_dependencies("stage_k")
         assert "stage_g" in trans
-        assert "stage_h" in trans
         assert "stage_a" in trans  # 通过 stage_g 传递
+        assert "stage_h" not in trans  # stage_k 不直接或间接依赖 stage_h
 
     def test_transitive_excludes_self(self):
         """传递依赖不应包含自身。"""
@@ -264,5 +261,5 @@ class TestLayerStructure:
     def test_stage_h_depends_on_g_and_d(self):
         assert set(STAGE_DEPENDENCIES["stage_h"]) == {"stage_d", "stage_g"}
 
-    def test_stage_k_depends_on_g_and_h(self):
-        assert set(STAGE_DEPENDENCIES["stage_k"]) == {"stage_g", "stage_h"}
+    def test_stage_k_depends_on_g(self):
+        assert set(STAGE_DEPENDENCIES["stage_k"]) == {"stage_g"}

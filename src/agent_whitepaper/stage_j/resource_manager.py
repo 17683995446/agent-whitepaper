@@ -19,11 +19,10 @@
     这让系统在压力下"活着"，而不是"死去"。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, Dict, List
-from enum import Enum
 import time
-import sys
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, List, Optional
 
 
 # ============================================================
@@ -102,7 +101,7 @@ class ResourceManager:
     def _check_psutil(self) -> bool:
         """检查psutil是否可用。"""
         try:
-            import psutil
+            import psutil  # noqa: F401
             return True
         except ImportError:
             return False
@@ -124,8 +123,9 @@ class ResourceManager:
         )
 
         if self._psutil_available:
-            import psutil
             import os
+
+            import psutil
             try:
                 process = psutil.Process(os.getpid())
                 usage.memory_mb = process.memory_info().rss / (1024 * 1024)

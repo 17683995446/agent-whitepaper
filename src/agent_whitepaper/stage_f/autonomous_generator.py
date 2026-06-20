@@ -11,9 +11,10 @@
     这是"自主驱动自己"的真正实现：系统自己决定下一步做什么。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
+from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
 from agent_whitepaper.stage_b.task_decomposer import Task, TaskDecomposer

@@ -13,12 +13,12 @@
     这实现了"操作多个agent"的基础：agent间可以互相通信协调。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any, Callable
-from enum import Enum
-from collections import deque
 import time
 import uuid
+from collections import deque
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 # ============================================================

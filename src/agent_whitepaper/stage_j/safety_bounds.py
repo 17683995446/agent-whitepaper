@@ -17,10 +17,11 @@
     正如生物的痛觉——它不阻止行动，但防止毁灭性行动。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Set, Tuple
-from enum import Enum
 from collections import deque
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, List, Optional, Set, Tuple
+
 import numpy as np
 
 

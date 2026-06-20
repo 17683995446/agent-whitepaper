@@ -12,16 +12,16 @@
     系统自动组建团队、分配任务、协调执行。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple, Set
-from enum import Enum
 import time
-import numpy as np
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, List, Optional
 
-from .registry import AgentRegistry, AgentRegistration, AgentCapability, AgentStatus
-from .role_assigner import RoleAssigner, RoleAssignment, Role, TeamConfiguration
-from .message_bus import MessageBus, Message, MessageType
-from agent_whitepaper.stage_b.task_decomposer import Task, SubGoal, SubGoalStatus
+from agent_whitepaper.stage_b.task_decomposer import Task
+
+from .message_bus import MessageBus, MessageType
+from .registry import AgentRegistry
+from .role_assigner import Role, RoleAssigner, RoleAssignment, TeamConfiguration
 
 
 # ============================================================

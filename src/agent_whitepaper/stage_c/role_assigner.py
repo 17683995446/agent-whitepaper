@@ -16,11 +16,12 @@
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
 from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
-from .registry import AgentRegistry, AgentRegistration, AgentCapability
+from .registry import AgentRegistry
 
 
 # ============================================================

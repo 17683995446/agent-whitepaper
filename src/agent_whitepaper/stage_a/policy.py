@@ -16,12 +16,11 @@
     3. 动作选择：以 (1-ε) 选最优动作，以 ε 随机探索
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, Dict, Tuple
+from dataclasses import dataclass
+
 import numpy as np
 
 from .action_space import DiscreteActionSpace
-from .environment import Transition
 
 
 # ============================================================

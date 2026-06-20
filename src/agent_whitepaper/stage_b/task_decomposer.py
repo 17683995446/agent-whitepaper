@@ -14,9 +14,8 @@
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, List, Tuple, Dict
 from enum import Enum
-import numpy as np
+from typing import List, Optional, Tuple
 
 
 # ============================================================

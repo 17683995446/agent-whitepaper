@@ -9,31 +9,29 @@
     python -m agent_whitepaper.demos.e2e_demo
 """
 
-import numpy as np
 import time
-from typing import List
 
-from agent_whitepaper.stage_a.action_space import DiscreteActionSpace
-from agent_whitepaper.stage_a.environment import GridWorld
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
-from agent_whitepaper.stage_a.memory import Episode
-
+from agent_whitepaper.stage_a.environment import GridWorld
+from agent_whitepaper.stage_b.meta_learner import MetaLearner
 from agent_whitepaper.stage_b.skill_abstractor import (
-    SkillLibrary, SkillAbstractor, Skill,
+    Skill,
+    SkillAbstractor,
+    SkillLibrary,
 )
 from agent_whitepaper.stage_b.skill_refiner import (
-    SkillRefiner, SkillExecutionRecord,
+    SkillExecutionRecord,
+    SkillRefiner,
 )
-from agent_whitepaper.stage_b.meta_learner import MetaLearner
-from agent_whitepaper.stage_b.task_decomposer import TaskDecomposer
 from agent_whitepaper.stage_b.subgoal_manager import LongTaskExecutor
-
-from agent_whitepaper.stage_c.registry import (
-    AgentRegistry, AgentCapability,
-)
-from agent_whitepaper.stage_c.message_bus import MessageBus
-from agent_whitepaper.stage_c.role_assigner import RoleAssigner, Role
+from agent_whitepaper.stage_b.task_decomposer import TaskDecomposer
 from agent_whitepaper.stage_c.coalition import CoalitionFormer
+from agent_whitepaper.stage_c.message_bus import MessageBus
+from agent_whitepaper.stage_c.registry import (
+    AgentCapability,
+    AgentRegistry,
+)
+from agent_whitepaper.stage_c.role_assigner import Role, RoleAssigner
 from agent_whitepaper.stage_c.shared_skills import SharedSkillLibrary
 
 
@@ -273,7 +271,7 @@ def demo_capability_3_multi_agent_collaboration(skill_library: SkillLibrary):
     if coalition:
         print(f"    联盟ID: {coalition.coalition_id}")
         print(f"    成员数: {coalition.size}")
-        print(f"    子目标分配:")
+        print("    子目标分配:")
         for goal_id, agent_id in coalition.subgoal_assignments.items():
             reg = registry.get_agent(agent_id)
             print(f"      子目标{goal_id} → {reg.name}")
@@ -314,7 +312,7 @@ def demo_capability_3_multi_agent_collaboration(skill_library: SkillLibrary):
         shared_lib.endorse(shared_name, "agent_0003", 4.5)
 
     stats = shared_lib.get_stats()
-    print(f"    共享库统计:")
+    print("    共享库统计:")
     print(f"      总技能数: {stats['total_skills']}")
     print(f"      已验证技能: {stats['verified_skills']}")
     print(f"      总下载次数: {stats['total_downloads']}")
@@ -414,9 +412,9 @@ def demo_final_verification():
     print(f"    增强成功率: {enhanced_rate:.0%}")
     print(f"    提升幅度: {improvement:+.0%}")
     if improvement > 0:
-        print(f"    ✓ 技能共享确实加速了新Agent的学习")
+        print("    ✓ 技能共享确实加速了新Agent的学习")
     else:
-        print(f"    ~ 技能共享未显著提升（Q表独立，技能作为参考）")
+        print("    ~ 技能共享未显著提升（Q表独立，技能作为参考）")
 
 
 # ============================================================
@@ -446,10 +444,10 @@ def main():
     total_time = time.time() - start_time
     print_header("演示完成")
     print(f"  总耗时: {total_time:.2f}秒")
-    print(f"  三大能力均已验证:")
-    print(f"    ✓ 能力一：自驱完成长任务（Agent自驱学会导航）")
-    print(f"    ✓ 能力二：自主增强技能（技能抽象+微调+元学习）")
-    print(f"    ✓ 能力三：操作多Agent协作（联盟+角色+技能共享）")
+    print("  三大能力均已验证:")
+    print("    ✓ 能力一：自驱完成长任务（Agent自驱学会导航）")
+    print("    ✓ 能力二：自主增强技能（技能抽象+微调+元学习）")
+    print("    ✓ 能力三：操作多Agent协作（联盟+角色+技能共享）")
     print("=" * 70)
 
 

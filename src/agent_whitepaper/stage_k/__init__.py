@@ -13,15 +13,15 @@
 
 from .long_run_demo import (
     LongRunConfig,
-    LongRunResult,
     LongRunDemo,
-    quick_demo,
+    LongRunResult,
     full_demo,
+    quick_demo,
 )
 from .report_generator import (
     CapabilityAssessment,
-    TrendAnalysis,
     ReportGenerator,
+    TrendAnalysis,
 )
 
 __all__ = [

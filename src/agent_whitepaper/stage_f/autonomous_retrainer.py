@@ -11,17 +11,19 @@
     系统不需要人工干预，自己发现问题、自己修复。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
-from enum import Enum
 import time
+from dataclasses import dataclass
+from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
-from .degradation_detector import DegradationDetector, DegradationReport, DegradationType
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.environment import GridWorld
 from agent_whitepaper.stage_e.knowledge_distiller import CollectiveLearningCoordinator
-from agent_whitepaper.stage_e.qtable_migration import QTableSnapshot, QTableKnowledgeBase
+from agent_whitepaper.stage_e.qtable_migration import QTableSnapshot
+
+from .degradation_detector import DegradationDetector, DegradationReport, DegradationType
 
 
 # ============================================================

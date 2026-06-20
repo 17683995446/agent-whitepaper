@@ -9,11 +9,11 @@
 """
 
 from .e2e_demo import (
-    main,
     demo_capability_1_self_driven_long_task,
     demo_capability_2_skill_enhancement,
     demo_capability_3_multi_agent_collaboration,
     demo_final_verification,
+    main,
 )
 
 __all__ = [

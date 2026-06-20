@@ -12,9 +12,8 @@
     这是"自主增强技能"的真正闭环：抽象→注入→行为改变→验证。
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
-import numpy as np
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
 
 from agent_whitepaper.stage_a.policy import QTable
 from agent_whitepaper.stage_b.skill_abstractor import Skill, SkillLibrary

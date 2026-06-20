@@ -14,10 +14,11 @@
     4. 触发恢复机制（重训练、回滚、知识刷新）
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Tuple
-from enum import Enum
 from collections import deque
+from dataclasses import dataclass
+from enum import Enum
+from typing import Dict, List
+
 import numpy as np
 
 

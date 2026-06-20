@@ -12,13 +12,11 @@
     5. 熔断机制：连续失败时暂停，避免雪崩
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Callable, Any
-from enum import Enum
 import time
-import traceback
-import threading
 from collections import deque
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
 
 
 # ============================================================
