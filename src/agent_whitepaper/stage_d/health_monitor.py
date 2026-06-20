@@ -285,7 +285,7 @@ class HealthMonitor:
             breaker._failure_count = 0
             self._global_stats["total_recoveries"] += 1
             return True
-        except Exception as e:
+        except Exception as e:  # 防火墙：恢复操作自身失败不应传播（避免恢复→崩溃循环）
             comp.record_failure(str(e))
             breaker.record_failure()
             return False
@@ -345,7 +345,7 @@ def safe_execute(
                 result = func(*args, **kwargs)
                 monitor.heartbeat(component)
                 return result
-            except Exception as e:
+            except Exception as e:  # 防火墙：被监控函数的任意异常均降级为默认返回值
                 monitor.report_failure(component, f"{type(e).__name__}: {str(e)}")
                 if breaker:
                     breaker.record_failure()

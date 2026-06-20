@@ -206,7 +206,7 @@ class PerpetualRuntime:
                     abstraction_level=s["abstraction_level"],
                 )
                 self.skill_library.add_skill(skill)
-        except Exception as e:
+        except Exception as e:  # 防火墙：状态恢复失败不应阻断启动
             self.persistence.log_event(
                 "recover_error", message=f"状态恢复失败: {e}"
             )
@@ -237,7 +237,7 @@ class PerpetualRuntime:
                     gamma=agent.gamma,
                 )
             self.health_monitor.heartbeat("persistence")
-        except Exception as e:
+        except Exception as e:  # 防火墙：持久化失败不应崩溃主循环
             self.health_monitor.report_failure("persistence", str(e))
 
     def _create_checkpoint(self, description: str = "") -> None:
@@ -320,7 +320,7 @@ class PerpetualRuntime:
                     self.stats.total_steps += report["total_steps"]
                     self.health_monitor.heartbeat(f"agent_{agent_id}")
 
-                except Exception as e:
+                except Exception as e:  # 防火墙：单Agent失败隔离，不影响其他Agent
                     self.scheduler.fail_task(scheduled.task_id, str(e))
                     self.health_monitor.report_failure(
                         "agent_runner", f"Agent {agent_id}: {str(e)}"
@@ -342,7 +342,7 @@ class PerpetualRuntime:
             success = True
             self.health_monitor.heartbeat("main_loop")
 
-        except Exception as e:
+        except Exception as e:  # 防火墙：永续运行保障，单次迭代失败不终止主循环
             self.health_monitor.report_failure(
                 "main_loop", f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}"
             )
@@ -363,8 +363,8 @@ class PerpetualRuntime:
                     self.skill_abstractor.abstract_from_episodes(
                         successful, self.skill_library
                     )
-        except Exception:
-            pass  # 技能抽象失败不影响主循环
+        except Exception:  # 组件降级：技能抽象失败不影响主循环（Stage T 将添加日志）
+            pass
 
     def _meta_learn(self) -> None:
         """元学习参数调整。"""
@@ -376,7 +376,7 @@ class PerpetualRuntime:
                     self.meta_learner.record_episode(reward, success, fe)
                 if self.meta_learner.should_adapt():
                     self.meta_learner.adapt_parameters()
-        except Exception:
+        except Exception:  # 组件降级：元学习失败不影响主循环（Stage T 将添加日志）
             pass
 
     def run(self) -> None:

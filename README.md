@@ -135,6 +135,9 @@ from agent_whitepaper import (
     SafetyMonitor, ResourceManager,
     # 阶段K
     LongRunDemo, ReportGenerator,
+    # 异常层次体系
+    AgentWhitepaperError, ConfigError, PersistenceError,
+    ComponentError, RecoveryError, CLIError,
 )
 ```
 
@@ -144,6 +147,37 @@ from agent_whitepaper import (
 from agent_whitepaper.stage_b import SkillAbstractor, LongTaskExecutor
 from agent_whitepaper.stage_d import CircuitBreaker, safe_execute
 ```
+
+## 异常层次体系
+
+系统在 `_exceptions.py` 中定义了统一的异常层次（阶段R），所有自定义异常继承自 `AgentWhitepaperError`：
+
+```
+AgentWhitepaperError
+├── ConfigError              # 配置域
+├── PersistenceError         # 持久化域
+│   ├── TransactionError
+│   └── StateSerializationError
+├── RuntimeExecutionError    # 运行时域
+│   ├── IterationError
+│   └── StateRecoveryError
+├── ComponentError           # 组件域（可降级，非致命）
+│   ├── SkillAbstractionError
+│   ├── MetaLearningError
+│   ├── CoalitionError
+│   ├── DistillationError
+│   ├── EvolutionError
+│   ├── MetricsCollectionError
+│   ├── CheckpointError
+│   └── AgentTaskError
+├── RecoveryError            # 恢复域
+└── CLIError                 # CLI域
+```
+
+异常捕获规范：
+- **防火墙层**（主循环、Agent隔离）：`except Exception`（永续运行保障）
+- **组件层**（技能抽象、元学习等）：`except Exception` + 降级注释
+- **边界层**（CLI、DB）：`except` 具体标准库异常
 
 ## 依赖关系
 

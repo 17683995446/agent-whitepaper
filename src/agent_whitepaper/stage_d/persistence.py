@@ -135,7 +135,7 @@ class PersistenceEngine:
         try:
             yield cursor
             self._conn.commit()
-        except Exception:
+        except Exception:  # 事务边界：任何异常均回滚并向上传播
             self._conn.rollback()
             raise
 

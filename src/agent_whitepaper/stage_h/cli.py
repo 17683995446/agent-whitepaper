@@ -11,6 +11,7 @@
 """
 
 import argparse
+import sqlite3
 import sys
 import time
 from typing import List, Optional
@@ -240,7 +241,7 @@ def cmd_status(args: argparse.Namespace) -> int:
     db_path = args.db
     try:
         engine = PersistenceEngine(db_path)
-    except Exception as e:
+    except (OSError, sqlite3.Error) as e:  # 边界层：DB打开失败（文件不存在/权限/格式）
         print(f"无法打开数据库 {db_path}: {e}")
         return 1
 
@@ -248,7 +249,6 @@ def cmd_status(args: argparse.Namespace) -> int:
 
     # 获取最近的检查点
     try:
-        import sqlite3
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
@@ -275,7 +275,7 @@ def cmd_status(args: argparse.Namespace) -> int:
                 print(f"    [{ts}] {etype}: {msg}")
 
         conn.close()
-    except Exception as e:
+    except sqlite3.Error as e:  # 边界层：DB查询失败（表不存在/SQL错误）
         print(f"  读取数据库失败: {e}")
 
     engine.close()

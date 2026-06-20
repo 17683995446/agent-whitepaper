@@ -15,6 +15,7 @@ import os
 from dataclasses import asdict
 from typing import Any, Dict, Optional
 
+from agent_whitepaper._exceptions import ConfigError
 from agent_whitepaper.stage_g.orchestrator import OrchestratorConfig
 
 # ============================================================
@@ -38,8 +39,13 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 # ============================================================
 # 配置验证错误
 # ============================================================
-class ConfigValidationError(ValueError):
-    """配置验证失败。"""
+class ConfigValidationError(ConfigError, ValueError):
+    """配置验证失败。
+
+    多重继承保证向后兼容：
+    - ConfigError：纳入统一异常层次体系
+    - ValueError：保持与既有代码/测试的 isinstance 兼容
+    """
 
 
 # ============================================================

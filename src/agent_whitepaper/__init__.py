@@ -27,6 +27,25 @@
     LongRunDemo, ReportGenerator  -- 阶段K
 """
 
+from ._exceptions import (
+    AgentWhitepaperError,
+    CheckpointError,
+    CLIError,
+    CoalitionError,
+    ComponentError,
+    ConfigError,
+    DistillationError,
+    EvolutionError,
+    MetaLearningError,
+    MetricsCollectionError,
+    PersistenceError,
+    RecoveryError,
+    RuntimeExecutionError,
+    SkillAbstractionError,
+    StateRecoveryError,
+    StateSerializationError,
+    TransactionError,
+)
 from .stage_a import GridWorld, QTable, SelfDrivenAgent
 from .stage_b import MetaLearner, Skill, SkillLibrary, TaskDecomposer
 from .stage_c import AgentRegistry, CoalitionFormer, MessageBus
@@ -94,6 +113,24 @@ __all__ = [
     # 阶段K
     "LongRunDemo",
     "ReportGenerator",
+    # 异常层次体系（阶段R）
+    "AgentWhitepaperError",
+    "ConfigError",
+    "PersistenceError",
+    "TransactionError",
+    "StateSerializationError",
+    "RuntimeExecutionError",
+    "StateRecoveryError",
+    "ComponentError",
+    "SkillAbstractionError",
+    "MetaLearningError",
+    "CoalitionError",
+    "DistillationError",
+    "EvolutionError",
+    "MetricsCollectionError",
+    "CheckpointError",
+    "RecoveryError",
+    "CLIError",
 ]
 
 __version__ = "0.1.0"

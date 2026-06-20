@@ -87,18 +87,21 @@ class TestTopLevelPackage:
         assert SystemOrchestrator is not None
 
     def test_all_subset_of_subpackages(self):
-        """顶层 __all__ 中每个名称必须来自某个子包的 __all__。"""
+        """顶层 __all__ 中每个名称必须来自某个子包或基础模块的 __all__。"""
         sub_alls = {}
         for sub in [
             stage_a, stage_b, stage_c, stage_d, stage_e,
             stage_f, stage_g, stage_h, stage_i, stage_j, stage_k,
         ]:
             sub_alls[sub.__name__] = set(sub.__all__)
+        # 基础模块（非阶段）也是合法的导出来源
+        from agent_whitepaper import _exceptions
+        sub_alls["_exceptions"] = set(_exceptions.__all__)
 
         for name in agent_whitepaper.__all__:
             found = any(name in s for s in sub_alls.values())
             assert found, (
-                f"顶层 __all__ 中的 '{name}' 不属于任何子包 __all__，"
+                f"顶层 __all__ 中的 '{name}' 不属于任何子包/基础模块 __all__，"
                 f"违反契约一致性"
             )
 

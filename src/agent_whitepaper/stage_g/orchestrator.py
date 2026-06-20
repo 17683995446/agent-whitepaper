@@ -268,7 +268,7 @@ class SystemOrchestrator:
             success = True
             self.health_monitor.heartbeat("orchestrator")
 
-        except Exception as e:
+        except Exception as e:  # 防火墙：永续运行保障，单步失败不终止主循环
             self.health_monitor.report_failure(
                 "orchestrator", f"{type(e).__name__}: {e}\n{traceback.format_exc()}"
             )
@@ -345,7 +345,7 @@ class SystemOrchestrator:
                         drive_profile=reg.capability.drive_profile,
                     )
 
-            except Exception:
+            except Exception:  # 防火墙：单Agent失败隔离，不影响其他Agent
                 # 单个Agent失败不影响其他
                 continue
 
@@ -360,7 +360,7 @@ class SystemOrchestrator:
                     self.skill_abstractor.abstract_from_episodes(
                         successful, self.skill_library
                     )
-        except Exception:
+        except Exception:  # 组件降级：技能抽象失败不影响主循环（Stage T 将添加日志）
             pass
 
     def _meta_learn(self) -> None:
@@ -383,7 +383,7 @@ class SystemOrchestrator:
                     # 应用元参数到Agent
                     params = self.meta_learner.params
                     agent.q_table.lr = params.learning_rate
-        except Exception:
+        except Exception:  # 组件降级：元学习失败不影响主循环（Stage T 将添加日志）
             pass
 
     def _try_coalition(self) -> None:
@@ -401,7 +401,7 @@ class SystemOrchestrator:
                     if agent:
                         self.task_executor.execute_task(task, agent, self.env)
                 coalition.status = CoalitionStatus.COMPLETED
-        except Exception:
+        except Exception:  # 组件降级：联盟组建失败不影响主循环（Stage T 将添加日志）
             pass
 
     def _distill_knowledge(self) -> None:
@@ -429,7 +429,7 @@ class SystemOrchestrator:
                 "injected_states",
                 getattr(distill_result, "states_distilled", 0),
             )
-        except Exception:
+        except Exception:  # 组件降级：知识蒸馏失败不影响主循环（Stage T 将添加日志）
             pass
 
     def _evolve(self) -> None:
@@ -440,7 +440,7 @@ class SystemOrchestrator:
                 log = self.evolution_controller.evolution_step(agent, self.env)
                 if log.get("recovery_strategy", "none") != "none":
                     self.metrics.increment("recovery_count")
-        except Exception:
+        except Exception:  # 组件降级：自主进化失败不影响主循环（Stage T 将添加日志）
             pass
 
     def _checkpoint(self) -> None:
@@ -455,7 +455,7 @@ class SystemOrchestrator:
                 "health_report": self.health_monitor.get_health_report(),
             }
             self.persistence.create_checkpoint(f"迭代 {self._iteration}", snapshot)
-        except Exception:
+        except Exception:  # 组件降级：检查点失败不影响主循环（Stage T 将添加日志）
             pass
 
     def _collect_metrics(self) -> None:
@@ -523,7 +523,7 @@ class SystemOrchestrator:
                 status=self.status.value,
             )
             self.metrics.record(snapshot)
-        except Exception:
+        except Exception:  # 组件降级：指标采集失败不影响主循环（Stage T 将添加日志）
             pass
 
     # --------------------------------------------------------
