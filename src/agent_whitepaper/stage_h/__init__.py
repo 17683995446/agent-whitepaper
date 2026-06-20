@@ -26,6 +26,9 @@
     diagnose_error: 诊断异常
     suggest_fix: 建议修复
     format_error_message: 格式化错误消息
+    Visualizer: 可视化报告生成器
+    generate_report: 生成可视化报告
+    generate_report_from_orchestrator: 从编排器生成可视化报告
     build_parser: 构建CLI参数解析器
     main: CLI主入口
     cmd_init: init子命令
@@ -73,6 +76,7 @@ from .recovery import (
     format_error_message,
     suggest_fix,
 )
+from .visualizer import Visualizer, generate_report, generate_report_from_orchestrator
 from .wizard import ConfigWizard, run_wizard
 
 __all__ = [
@@ -101,6 +105,9 @@ __all__ = [
     "diagnose_error",
     "suggest_fix",
     "format_error_message",
+    "Visualizer",
+    "generate_report",
+    "generate_report_from_orchestrator",
     "build_parser",
     "main",
     "cmd_init",

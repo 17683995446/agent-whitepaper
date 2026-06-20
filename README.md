@@ -111,6 +111,9 @@ agentwp status --db agent_system.db
 # 环境诊断（检查依赖、导入、配置等）
 agentwp doctor
 
+# 生成可视化HTML报告（运行20轮迭代并生成自包含HTML）
+agentwp report -o report.html -n 20
+
 # 查看版本
 agentwp --version
 

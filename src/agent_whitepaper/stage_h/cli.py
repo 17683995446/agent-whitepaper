@@ -12,6 +12,7 @@
 
 import argparse
 import logging
+import os
 import sqlite3
 import sys
 import time
@@ -34,6 +35,7 @@ from .progress import (
     predict_phases,
 )
 from .recovery import format_error_message
+from .visualizer import generate_report_from_orchestrator
 from .wizard import ConfigWizard
 
 
@@ -449,7 +451,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     # 6. CLI子命令检查
     print("\nCLI 子命令:")
     parser = build_parser()
-    subcommands = ["init", "run", "demo", "status", "doctor", "wizard"]
+    subcommands = ["init", "run", "demo", "status", "doctor", "wizard", "report"]
     for cmd in subcommands:
         # 检查子命令是否注册
         try:
@@ -520,6 +522,50 @@ def cmd_wizard(args: argparse.Namespace) -> int:
     except ConfigError as e:
         output_func(f"配置错误: {e}")
         return 1
+    return 0
+
+
+def cmd_report(args: argparse.Namespace) -> int:
+    """生成可视化HTML报告。
+
+    第一性原理：
+        "A picture is worth a thousand words"——图表胜过数字。
+        将运行结果转换为自包含的HTML可视化报告。
+    """
+    output_path = args.output
+    n_iterations = args.iterations
+
+    # 创建并运行系统以获取指标
+    try:
+        config = load_config(
+            n_agents=args.agents,
+            grid_size=args.grid,
+            db_path=":memory:",
+            max_iterations=n_iterations,
+            seed=42,
+        )
+        orch = SystemOrchestrator(config)
+        orch.initialize()
+    except AgentWhitepaperError as e:
+        print(format_error_message(e), file=sys.stderr)
+        return 1
+
+    print(f"  运行 {n_iterations} 轮迭代以采集数据...")
+    for _ in range(n_iterations):
+        orch.run_iteration()
+
+    # 生成报告
+    print("  生成可视化报告...")
+    try:
+        generate_report_from_orchestrator(orch, output_path)
+    except Exception as e:  # 防火墙层：报告生成失败不影响系统
+        print(f"报告生成失败: {e}", file=sys.stderr)
+        orch.stop("report")
+        return 1
+
+    orch.stop("report")
+    print(f"  报告已生成: {output_path}")
+    print(f"  用浏览器打开查看: file://{os.path.abspath(output_path)}")
     return 0
 
 
@@ -636,6 +682,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="输出配置文件路径（默认: config.yaml）"
     )
     p_wizard.set_defaults(func=cmd_wizard)
+
+    # report
+    p_report = subparsers.add_parser(
+        "report", help="生成可视化HTML报告"
+    )
+    p_report.add_argument(
+        "-o", "--output", default="report.html",
+        help="输出HTML文件路径（默认: report.html）"
+    )
+    p_report.add_argument(
+        "-n", "--iterations", type=int, default=20,
+        help="运行迭代次数以采集数据（默认: 20）"
+    )
+    p_report.add_argument(
+        "-a", "--agents", type=int, default=3,
+        help="Agent数量（默认: 3）"
+    )
+    p_report.add_argument(
+        "-g", "--grid", type=int, default=5,
+        help="网格大小（默认: 5）"
+    )
+    p_report.set_defaults(func=cmd_report)
 
     return parser
 
