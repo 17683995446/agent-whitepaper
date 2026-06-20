@@ -70,7 +70,16 @@ from .stage_f import (
     DegradationDetector,
 )
 from .stage_g import MetricsCollector, SystemOrchestrator
-from .stage_h import load_config, main
+from .stage_h import (
+    create_system,
+    get_status,
+    list_available_templates,
+    load_config,
+    main,
+    quick_start,
+    run_demo,
+    train_agent,
+)
 from .stage_i import EnvironmentProtocol, FunctionCallEnvironment
 from .stage_j import ResourceManager, SafetyMonitor
 from .stage_k import LongRunDemo, ReportGenerator
@@ -108,6 +117,12 @@ __all__ = [
     # 阶段H
     "load_config",
     "main",
+    "quick_start",
+    "train_agent",
+    "run_demo",
+    "create_system",
+    "get_status",
+    "list_available_templates",
     # 阶段I
     "EnvironmentProtocol",
     "FunctionCallEnvironment",

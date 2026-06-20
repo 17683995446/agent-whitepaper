@@ -51,11 +51,50 @@ print(f"平均奖励: {agent.stats.avg_reward:.2f}")
 print(f"Q表条目数: {agent.q_table.n_states * agent.q_table.n_actions}")
 ```
 
+### 便捷API（一行代码）
+
+常见任务封装为单行调用，降低入门门槛：
+
+```python
+from agent_whitepaper import quick_start, train_agent, run_demo, create_system, get_status
+
+# 一行启动多Agent系统并获取结果
+report = quick_start(iterations=10, n_agents=3, grid_size=5)
+print(f"完成任务: {report['tasks_completed']}")
+
+# 一行训练单个Agent
+agent = train_agent(n_episodes=100)
+print(f"成功率: {agent.stats.success_rate:.1%}")
+
+# 一行运行演示
+report = run_demo(n_iterations=30)
+
+# 从模板创建系统（default/quick-test/production/multi-agent/long-run）
+orch = create_system(template="quick-test")
+for _ in range(10):
+    orch.run_iteration()
+orch.stop("done")
+
+# 查询持久化数据库状态
+status = get_status("agent_system.db")
+
+# 列出可用配置模板及描述
+from agent_whitepaper import list_available_templates
+for name, desc in list_available_templates().items():
+    print(f"  {name}: {desc}")
+```
+
 ### CLI 入口
 
 ```bash
 # 生成默认配置文件
 agentwp init -o config.yaml
+
+# 使用预置模板生成配置（quick-test/production/multi-agent/long-run）
+agentwp init --template quick-test -o config.yaml
+
+# 列出所有可用模板
+agentwp init --list-templates
 
 # 快速演示（30轮迭代）
 agentwp demo
@@ -65,6 +104,9 @@ agentwp run --config config.yaml
 
 # 查询运行状态
 agentwp status --db agent_system.db
+
+# 环境诊断（检查依赖、导入、配置等）
+agentwp doctor
 
 # 查看版本
 agentwp --version

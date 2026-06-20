@@ -258,8 +258,11 @@ class TestLayerStructure:
             "stage_d", "stage_e", "stage_f",
         }
 
-    def test_stage_h_depends_on_g_and_d(self):
-        assert set(STAGE_DEPENDENCIES["stage_h"]) == {"stage_d", "stage_g"}
+    def test_stage_h_depends_on_a_g_and_d(self):
+        """stage_h 依赖 stage_a（便捷API）、stage_d（持久化）、stage_g（编排）。"""
+        assert set(STAGE_DEPENDENCIES["stage_h"]) == {
+            "stage_a", "stage_d", "stage_g"
+        }
 
     def test_stage_k_depends_on_g(self):
         assert set(STAGE_DEPENDENCIES["stage_k"]) == {"stage_g"}

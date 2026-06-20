@@ -12,6 +12,12 @@
     predict_phases: 预测迭代阶段
     format_duration: 格式化时长
     render_progress_bar: 渲染进度条
+    quick_start: 一行启动系统
+    train_agent: 一行训练Agent
+    run_demo: 一行运行演示
+    create_system: 从模板创建系统
+    get_status: 查询运行状态
+    list_available_templates: 列出模板及描述
     build_parser: 构建CLI参数解析器
     main: CLI主入口
     cmd_init: init子命令
@@ -36,6 +42,14 @@ from .config import (
     list_templates,
     load_config,
 )
+from .convenience import (
+    create_system,
+    get_status,
+    list_available_templates,
+    quick_start,
+    run_demo,
+    train_agent,
+)
 from .progress import (
     ProgressReporter,
     SilentReporter,
@@ -56,6 +70,12 @@ __all__ = [
     "predict_phases",
     "format_duration",
     "render_progress_bar",
+    "quick_start",
+    "train_agent",
+    "run_demo",
+    "create_system",
+    "get_status",
+    "list_available_templates",
     "build_parser",
     "main",
     "cmd_init",

@@ -19,7 +19,7 @@
     ├── stage_e → {a, b}
     stage_f → {a, b, e}
     stage_g → {a, b, c, d, e, f}  (全系统集成层)
-    stage_h → {d, g}
+    stage_h → {a, d, g}
     stage_k → {g}
     demos → {a, b, c}
 
@@ -53,7 +53,7 @@ STAGE_DEPENDENCIES: Dict[str, List[str]] = {
         "stage_e",
         "stage_f",
     ],
-    "stage_h": ["stage_d", "stage_g"],
+    "stage_h": ["stage_a", "stage_d", "stage_g"],
     "stage_i": ["stage_a"],
     "stage_j": [],
     "stage_k": ["stage_g"],
