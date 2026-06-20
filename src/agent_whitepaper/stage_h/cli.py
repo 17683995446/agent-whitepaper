@@ -33,6 +33,7 @@ from .progress import (
     SilentReporter,
     predict_phases,
 )
+from .recovery import format_error_message
 from .wizard import ConfigWizard
 
 
@@ -150,10 +151,10 @@ def cmd_run(args: argparse.Namespace) -> int:
     try:
         config = load_config(path=args.config, **overrides)
     except ConfigError as e:
-        print(f"配置错误: {e}", file=sys.stderr)
+        print(format_error_message(e), file=sys.stderr)
         return 1
     except FileNotFoundError as e:
-        print(f"配置文件不存在: {e}", file=sys.stderr)
+        print(format_error_message(e), file=sys.stderr)
         return 1
 
     _print_section("Agent Whitepaper 永续自主进化系统")

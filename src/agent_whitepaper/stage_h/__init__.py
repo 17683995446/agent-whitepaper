@@ -20,6 +20,12 @@
     list_available_templates: 列出模板及描述
     ConfigWizard: 交互式配置向导
     run_wizard: 运行向导便捷函数
+    ErrorRecovery: 智能错误恢复
+    Diagnosis: 错误诊断结果
+    AutoFix: 自动修复方案
+    diagnose_error: 诊断异常
+    suggest_fix: 建议修复
+    format_error_message: 格式化错误消息
     build_parser: 构建CLI参数解析器
     main: CLI主入口
     cmd_init: init子命令
@@ -59,6 +65,14 @@ from .progress import (
     predict_phases,
     render_progress_bar,
 )
+from .recovery import (
+    AutoFix,
+    Diagnosis,
+    ErrorRecovery,
+    diagnose_error,
+    format_error_message,
+    suggest_fix,
+)
 from .wizard import ConfigWizard, run_wizard
 
 __all__ = [
@@ -81,6 +95,12 @@ __all__ = [
     "list_available_templates",
     "ConfigWizard",
     "run_wizard",
+    "ErrorRecovery",
+    "Diagnosis",
+    "AutoFix",
+    "diagnose_error",
+    "suggest_fix",
+    "format_error_message",
     "build_parser",
     "main",
     "cmd_init",
