@@ -29,6 +29,10 @@ from .config import (
     list_templates,
     load_config,
 )
+from .plugins import (
+    BUILTIN_PLUGINS,
+    list_builtin_plugins,
+)
 from .progress import (
     ProgressReporter,
     SilentReporter,
@@ -451,7 +455,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     # 6. CLI子命令检查
     print("\nCLI 子命令:")
     parser = build_parser()
-    subcommands = ["init", "run", "demo", "status", "doctor", "wizard", "report"]
+    subcommands = ["init", "run", "demo", "status", "doctor", "wizard", "report", "plugins"]
     for cmd in subcommands:
         # 检查子命令是否注册
         try:
@@ -567,6 +571,49 @@ def cmd_report(args: argparse.Namespace) -> int:
     print(f"  报告已生成: {output_path}")
     print(f"  用浏览器打开查看: file://{os.path.abspath(output_path)}")
     return 0
+
+
+def cmd_plugins(args: argparse.Namespace) -> int:
+    """列出或查看插件。
+
+    第一性原理：
+        "Extensibility"——允许用户扩展而非修改核心。
+        插件系统提供扩展点，本命令帮助用户发现可用插件。
+    """
+    action = getattr(args, "action", "list")
+
+    if action == "list":
+        _print_section("可用内置插件")
+        plugins = list_builtin_plugins()
+        if not plugins:
+            print("  无可用插件")
+            return 0
+        for name, desc in plugins.items():
+            cls = BUILTIN_PLUGINS.get(name)
+            version = getattr(cls, "version", "?") if cls else "?"
+            print(f"  {name:<20} v{version:<8} {desc}")
+        print("\n  使用: 在代码中 create_plugin_manager(enabled=['logging'])")
+        return 0
+
+    if action == "info":
+        name = getattr(args, "name", None)
+        if not name:
+            print("错误: 需要插件名", file=sys.stderr)
+            return 1
+        if name not in BUILTIN_PLUGINS:
+            print(f"错误: 未知插件 '{name}'", file=sys.stderr)
+            return 1
+        cls = BUILTIN_PLUGINS[name]
+        _print_section(f"插件详情: {name}")
+        print(f"  名称: {cls.name}")
+        print(f"  版本: {cls.version}")
+        print(f"  描述: {cls.description}")
+        print(f"  类: {cls.__name__}")
+        print("  钩子: on_init, on_iteration, on_metrics, on_error, on_stop")
+        return 0
+
+    print(f"未知操作: {action}", file=sys.stderr)
+    return 1
 
 
 # ============================================================
@@ -704,6 +751,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="网格大小（默认: 5）"
     )
     p_report.set_defaults(func=cmd_report)
+
+    # plugins
+    p_plugins = subparsers.add_parser(
+        "plugins", help="列出或查看内置插件"
+    )
+    p_plugins.add_argument(
+        "action", nargs="?", default="list",
+        choices=["list", "info"],
+        help="操作：list（列出）/ info（详情，需指定--name）"
+    )
+    p_plugins.add_argument(
+        "--name", default=None,
+        help="插件名（info操作时必需）"
+    )
+    p_plugins.set_defaults(func=cmd_plugins)
 
     return parser
 

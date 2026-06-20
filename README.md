@@ -114,6 +114,12 @@ agentwp doctor
 # 生成可视化HTML报告（运行20轮迭代并生成自包含HTML）
 agentwp report -o report.html -n 20
 
+# 列出内置插件
+agentwp plugins list
+
+# 查看插件详情
+agentwp plugins info --name logging
+
 # 查看版本
 agentwp --version
 

@@ -29,6 +29,13 @@
     Visualizer: 可视化报告生成器
     generate_report: 生成可视化报告
     generate_report_from_orchestrator: 从编排器生成可视化报告
+    Plugin: 插件基类
+    PluginContext: 插件事件上下文
+    PluginManager: 插件管理器
+    LoggingPlugin: 日志插件
+    MetricsExportPlugin: 指标导出插件
+    list_builtin_plugins: 列出内置插件
+    create_plugin_manager: 创建插件管理器
     build_parser: 构建CLI参数解析器
     main: CLI主入口
     cmd_init: init子命令
@@ -60,6 +67,16 @@ from .convenience import (
     quick_start,
     run_demo,
     train_agent,
+)
+from .plugins import (
+    BUILTIN_PLUGINS,
+    LoggingPlugin,
+    MetricsExportPlugin,
+    Plugin,
+    PluginContext,
+    PluginManager,
+    create_plugin_manager,
+    list_builtin_plugins,
 )
 from .progress import (
     ProgressReporter,
@@ -108,6 +125,14 @@ __all__ = [
     "Visualizer",
     "generate_report",
     "generate_report_from_orchestrator",
+    "Plugin",
+    "PluginContext",
+    "PluginManager",
+    "LoggingPlugin",
+    "MetricsExportPlugin",
+    "BUILTIN_PLUGINS",
+    "list_builtin_plugins",
+    "create_plugin_manager",
     "build_parser",
     "main",
     "cmd_init",
