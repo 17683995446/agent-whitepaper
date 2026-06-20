@@ -20,29 +20,51 @@
 
 ## 快速开始
 
+### 安装
+
 ```bash
 pip install -e .
+```
 
-# 基本使用：单Agent学习
-python -c "
+> 要求 Python >= 3.8。核心依赖：numpy, pyyaml, psutil。
+
+### 最小示例：单Agent学习
+
+```python
 from agent_whitepaper import SelfDrivenAgent, GridWorld
 
-env = GridWorld(size=4, seed=42)
-agent = SelfDrivenAgent(action_space=env.action_space, q_table_size=16)
+# 创建 5x5 网格世界（25个状态，4个动作）
+env = GridWorld(size=5, seed=42)
+agent = SelfDrivenAgent(
+    action_space=env.action_space,
+    n_states=25,
+    learning_rate=0.1,
+    seed=42,
+)
 
+# 训练 100 个情节
 for episode in range(100):
-    obs = env.reset()
-    done = False
-    while not done:
-        action, obs, reward, done, info = agent.perceive_and_act(
-            obs, reward=0, done=False, env=env
-        )
-print('Q表条目数:', len(agent.q_table._table))
-"
+    episode_obj = agent.run_episode(env, max_steps=100)
 
-# CLI入口
-agentwp demo --quick
-agentwp status
+print(f"成功率: {agent.stats.success_rate:.1%}")
+print(f"平均奖励: {agent.stats.avg_reward:.2f}")
+print(f"Q表条目数: {agent.q_table.n_states * agent.q_table.n_actions}")
+```
+
+### CLI 入口
+
+```bash
+# 生成默认配置文件
+agentwp init -o config.yaml
+
+# 快速演示（30轮迭代）
+agentwp demo
+
+# 启动永续运行
+agentwp run --config config.yaml
+
+# 查询运行状态
+agentwp status --db agent_system.db
 ```
 
 ## 架构总览
