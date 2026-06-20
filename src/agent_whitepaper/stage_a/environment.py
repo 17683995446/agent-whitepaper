@@ -89,6 +89,16 @@ class GridWorld(Environment):
     奖励：到达目标 +1，每步 -0.01（鼓励快速到达）
 
     观测编码：Agent位置 + 目标位置的one-hot拼接
+
+    示例：
+        >>> from agent_whitepaper import GridWorld
+        >>> env = GridWorld(size=5, seed=42)
+        >>> obs = env.reset()
+        >>> obs.shape
+        (50,)
+        >>> obs, reward, done, info = env.step(GridWorld.ACTION_RIGHT)
+        >>> info["agent_pos"]
+        (0, 1)
     """
 
     # 动作定义

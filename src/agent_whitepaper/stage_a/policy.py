@@ -35,6 +35,15 @@ class QTable(PolicyProtocol):
     状态用离散索引表示（如GridWorld的格子编号）。
 
     实现 PolicyProtocol 接口，可被任何满足该协议的策略后端替换。
+
+    示例：
+        >>> from agent_whitepaper import QTable
+        >>> q = QTable(n_states=25, n_actions=4, learning_rate=0.1)
+        >>> td_error = q.update(state=0, action=1, reward=1.0, next_state=6, done=False)
+        >>> round(td_error, 2)
+        1.0
+        >>> q.best_action(0) in range(4)
+        True
     """
 
     def __init__(self, n_states: int, n_actions: int, learning_rate: float = 0.1) -> None:

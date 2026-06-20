@@ -82,6 +82,21 @@ class SelfDrivenAgent(AgentProtocol):
     4. 记忆：情节记忆缓冲存储经历，支持优先级回放
 
     实现 AgentProtocol 接口，可被任何满足该协议的Agent后端替换。
+
+    示例：
+        >>> from agent_whitepaper import GridWorld, SelfDrivenAgent
+        >>> env = GridWorld(size=5, seed=42)
+        >>> agent = SelfDrivenAgent(
+        ...     action_space=env.action_space,
+        ...     n_states=25,
+        ...     learning_rate=0.1,
+        ...     seed=42,
+        ... )
+        >>> episode = agent.run_episode(env, max_steps=100)
+        >>> episode.total_reward  # doctest: +ELLIPSIS
+        -1.0...
+        >>> isinstance(episode.success, bool)
+        True
     """
 
     def __init__(

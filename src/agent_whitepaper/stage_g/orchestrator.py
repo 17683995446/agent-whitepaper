@@ -103,6 +103,20 @@ class SystemOrchestrator:
     - run(): 永续运行主循环
     - get_metrics(): 获取可观测性指标
     - stop(): 优雅停止
+
+    示例：
+        >>> from agent_whitepaper.stage_g.orchestrator import (
+        ...     SystemOrchestrator, OrchestratorConfig,
+        ... )
+        >>> config = OrchestratorConfig(
+        ...     grid_size=5, n_agents=2, db_path=":memory:", max_iterations=3,
+        ... )
+        >>> orch = SystemOrchestrator(config)
+        >>> orch.initialize()
+        >>> for _ in range(config.max_iterations):
+        ...     orch.run_iteration()
+        >>> report = orch.get_metrics()
+        >>> orch.stop("done")
     """
 
     def __init__(self, config: Optional[OrchestratorConfig] = None) -> None:
