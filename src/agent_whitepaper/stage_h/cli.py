@@ -11,11 +11,15 @@
 """
 
 import argparse
+import logging
 import sqlite3
 import sys
 import time
 from typing import List, Optional
 
+from agent_whitepaper import __version__
+from agent_whitepaper._exceptions import AgentWhitepaperError, ConfigError
+from agent_whitepaper._logging import configure_logging
 from agent_whitepaper.stage_g.orchestrator import SystemOrchestrator
 
 from .config import ConfigLoader, load_config
@@ -110,7 +114,14 @@ def cmd_run(args: argparse.Namespace) -> int:
     if args.memory:
         overrides["db_path"] = ":memory:"
 
-    config = load_config(path=args.config, **overrides)
+    try:
+        config = load_config(path=args.config, **overrides)
+    except ConfigError as e:
+        print(f"配置错误: {e}", file=sys.stderr)
+        return 1
+    except FileNotFoundError as e:
+        print(f"配置文件不存在: {e}", file=sys.stderr)
+        return 1
 
     _print_section("Agent Whitepaper 永续自主进化系统")
     _print_kv("网格大小", config.grid_size)
@@ -120,8 +131,12 @@ def cmd_run(args: argparse.Namespace) -> int:
     print()
 
     # 创建并运行
-    orch = SystemOrchestrator(config)
-    orch.initialize()
+    try:
+        orch = SystemOrchestrator(config)
+        orch.initialize()
+    except AgentWhitepaperError as e:
+        print(f"系统初始化失败: {e}", file=sys.stderr)
+        return 1
 
     _print_section("系统启动")
     print(f"  状态: {orch.status.value}")
@@ -190,25 +205,33 @@ def cmd_demo(args: argparse.Namespace) -> int:
     """快速演示系统能力。"""
     _print_section("Agent Whitepaper 快速演示")
 
-    config = load_config(
-        n_agents=3,
-        grid_size=5,
-        db_path=":memory:",
-        max_iterations=30,
-        skill_abstract_interval=3,
-        meta_learn_interval=5,
-        coalition_interval=8,
-        distill_interval=10,
-        evolve_interval=7,
-    )
+    n_agents = args.agents
+    grid_size = args.grid
+    n_iterations = args.iterations
 
-    orch = SystemOrchestrator(config)
-    orch.initialize()
+    try:
+        config = load_config(
+            n_agents=n_agents,
+            grid_size=grid_size,
+            db_path=":memory:",
+            max_iterations=n_iterations,
+            skill_abstract_interval=3,
+            meta_learn_interval=5,
+            coalition_interval=8,
+            distill_interval=10,
+            evolve_interval=7,
+        )
 
-    print(f"  启动 {len(orch.agents)} 个Agent，运行30轮迭代...\n")
+        orch = SystemOrchestrator(config)
+        orch.initialize()
+    except AgentWhitepaperError as e:
+        print(f"演示启动失败: {e}", file=sys.stderr)
+        return 1
+
+    print(f"  启动 {len(orch.agents)} 个Agent，运行{n_iterations}轮迭代...\n")
 
     start = time.time()
-    for _ in range(30):
+    for _ in range(n_iterations):
         orch.run_iteration()
     elapsed = time.time() - start
 
@@ -227,7 +250,7 @@ def cmd_demo(args: argparse.Namespace) -> int:
     print(f"  3. 长任务执行: 完成{report['tasks_completed']}个任务，"
           f"总情节{report['latest_snapshot']['total_episodes']}")
     # 能力4：永续运行
-    print(f"  4. 永续运行: 30轮迭代全部完成，耗时{elapsed:.1f}s，"
+    print(f"  4. 永续运行: {n_iterations}轮迭代全部完成，耗时{elapsed:.1f}s，"
           f"恢复{report['cumulative']['recovery_count']}次")
 
     print()
@@ -291,6 +314,24 @@ def build_parser() -> argparse.ArgumentParser:
         prog="agentwp",
         description="Agent Whitepaper - 永续自主进化Agent系统",
     )
+    parser.add_argument(
+        "-V", "--version",
+        action="version",
+        version=f"agentwp {__version__}",
+        help="显示版本号并退出",
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        default=False,
+        help="详细输出（DEBUG级别日志）",
+    )
+    parser.add_argument(
+        "-q", "--quiet",
+        action="store_true",
+        default=False,
+        help="静默模式（仅输出错误）",
+    )
     subparsers = parser.add_subparsers(dest="command", help="子命令")
 
     # init
@@ -331,6 +372,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     # demo
     p_demo = subparsers.add_parser("demo", help="快速演示系统能力")
+    p_demo.add_argument(
+        "-n", "--iterations", type=int, default=30,
+        help="演示迭代次数（默认: 30）",
+    )
+    p_demo.add_argument(
+        "-a", "--agents", type=int, default=3,
+        help="Agent数量（默认: 3）",
+    )
+    p_demo.add_argument(
+        "-g", "--grid", type=int, default=5,
+        help="网格大小（默认: 5）",
+    )
     p_demo.set_defaults(func=cmd_demo)
 
     # status
@@ -352,6 +405,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     if not hasattr(args, "func"):
         parser.print_help()
         return 1
+
+    # 根据全局标志配置日志级别
+    if getattr(args, "verbose", False):
+        configure_logging(level=logging.DEBUG)
+    elif getattr(args, "quiet", False):
+        configure_logging(level=logging.ERROR)
 
     return args.func(args)
 

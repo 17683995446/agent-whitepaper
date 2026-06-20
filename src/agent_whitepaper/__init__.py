@@ -27,6 +27,8 @@
     LongRunDemo, ReportGenerator  -- 阶段K
 """
 
+__version__ = "0.1.0"
+
 from ._exceptions import (
     AgentWhitepaperError,
     CheckpointError,
@@ -141,5 +143,3 @@ __all__ = [
     "get_logger",
     "configure_logging",
 ]
-
-__version__ = "0.1.0"
