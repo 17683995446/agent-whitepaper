@@ -22,7 +22,12 @@ from agent_whitepaper._exceptions import AgentWhitepaperError, ConfigError
 from agent_whitepaper._logging import configure_logging
 from agent_whitepaper.stage_g.orchestrator import SystemOrchestrator
 
-from .config import ConfigLoader, load_config
+from .config import (
+    CONFIG_TEMPLATES,
+    ConfigLoader,
+    list_templates,
+    load_config,
+)
 
 
 # ============================================================
@@ -92,12 +97,34 @@ def _format_metrics_report(report: dict) -> str:
 # 命令处理函数
 # ============================================================
 def cmd_init(args: argparse.Namespace) -> int:
-    """生成默认配置文件。"""
+    """生成配置文件。
+
+    第一性原理：
+        "Sensible defaults"——好默认值降低认知负荷。
+        预置模板覆盖常见场景，用户无需理解所有参数即可启动。
+    """
+    # 列出模板模式
+    if getattr(args, "list_templates", False):
+        _print_section("可用配置模板")
+        for name in list_templates():
+            desc = CONFIG_TEMPLATES[name].get("_description", "")
+            print(f"  {name:<15} {desc}")
+        print("\n  使用: agentwp init --template <名称> -o config.yaml")
+        return 0
+
     path = args.output
+    template = getattr(args, "template", None)
     loader = ConfigLoader()
-    loader.generate_default_yaml(path)
-    print(f"默认配置已生成: {path}")
-    print("修改后运行: agentwp run --config {path}")
+
+    try:
+        loader.generate_default_yaml(path, template=template)
+    except ConfigError as e:
+        print(f"配置错误: {e}", file=sys.stderr)
+        return 1
+
+    label = f"模板 '{template}'" if template else "默认配置"
+    print(f"{label}已生成: {path}")
+    print("修改后运行: agentwp run --config " + path)
     return 0
 
 
@@ -471,10 +498,19 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", help="子命令")
 
     # init
-    p_init = subparsers.add_parser("init", help="生成默认配置文件")
+    p_init = subparsers.add_parser("init", help="生成配置文件（支持预置模板）")
     p_init.add_argument(
         "-o", "--output", default="config.yaml",
         help="输出配置文件路径（默认: config.yaml）"
+    )
+    p_init.add_argument(
+        "-t", "--template", default=None,
+        choices=list_templates(),
+        help="使用预置模板（可选: " + ", ".join(list_templates()) + "）"
+    )
+    p_init.add_argument(
+        "--list-templates", action="store_true",
+        help="列出所有可用模板并退出"
     )
     p_init.set_defaults(func=cmd_init)
 

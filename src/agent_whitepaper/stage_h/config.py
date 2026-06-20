@@ -13,7 +13,7 @@
 
 import os
 from dataclasses import asdict
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from agent_whitepaper._exceptions import ConfigError
 from agent_whitepaper.stage_g.orchestrator import OrchestratorConfig
@@ -46,6 +46,101 @@ class ConfigValidationError(ConfigError, ValueError):
     - ConfigError：纳入统一异常层次体系
     - ValueError：保持与既有代码/测试的 isinstance 兼容
     """
+
+
+# ============================================================
+# 配置模板（预置场景配置）
+# ============================================================
+#: 配置模板注册表：每个模板是一个完整配置字典
+CONFIG_TEMPLATES: Dict[str, Dict[str, Any]] = {
+    "default": {
+        "_description": "默认配置：平衡的功能与性能",
+        **DEFAULT_CONFIG,
+    },
+    "quick-test": {
+        "_description": "快速测试：小规模、短迭代，用于验证安装",
+        "grid_size": 3,
+        "n_agents": 2,
+        "db_path": ":memory:",
+        "checkpoint_interval": 10,
+        "skill_abstract_interval": 3,
+        "meta_learn_interval": 5,
+        "distill_interval": 10,
+        "evolve_interval": 7,
+        "coalition_interval": 5,
+        "max_iterations": 10,
+        "seed": 42,
+    },
+    "production": {
+        "_description": "生产环境：持久化、较大规模、稳定间隔",
+        "grid_size": 7,
+        "n_agents": 5,
+        "db_path": "agent_system.db",
+        "checkpoint_interval": 100,
+        "skill_abstract_interval": 10,
+        "meta_learn_interval": 20,
+        "distill_interval": 50,
+        "evolve_interval": 30,
+        "coalition_interval": 25,
+        "max_iterations": None,
+        "seed": 42,
+    },
+    "multi-agent": {
+        "_description": "多Agent协作：更多Agent、更紧密的协作间隔",
+        "grid_size": 5,
+        "n_agents": 6,
+        "db_path": "agent_system.db",
+        "checkpoint_interval": 50,
+        "skill_abstract_interval": 5,
+        "meta_learn_interval": 10,
+        "distill_interval": 20,
+        "evolve_interval": 15,
+        "coalition_interval": 5,
+        "max_iterations": None,
+        "seed": 42,
+    },
+    "long-run": {
+        "_description": "长时运行：大间隔、持久化，适合长时间自主进化",
+        "grid_size": 5,
+        "n_agents": 3,
+        "db_path": "agent_system.db",
+        "checkpoint_interval": 200,
+        "skill_abstract_interval": 20,
+        "meta_learn_interval": 40,
+        "distill_interval": 100,
+        "evolve_interval": 60,
+        "coalition_interval": 50,
+        "max_iterations": None,
+        "seed": 42,
+    },
+}
+
+
+def list_templates() -> List[str]:
+    """返回所有可用模板名称。"""
+    return [name for name in CONFIG_TEMPLATES.keys()]
+
+
+def get_template(name: str) -> Dict[str, Any]:
+    """获取指定模板的配置（不含 _description 元字段）。
+
+    Args:
+        name: 模板名称
+
+    Returns:
+        配置字典（不含 _description）
+
+    Raises:
+        ConfigValidationError: 模板不存在
+    """
+    if name not in CONFIG_TEMPLATES:
+        available = ", ".join(CONFIG_TEMPLATES.keys())
+        raise ConfigValidationError(
+            f"未知模板 '{name}'，可用模板: {available}"
+        )
+    template = dict(CONFIG_TEMPLATES[name])
+    template.pop("_description", None)
+    return template
 
 
 # ============================================================
@@ -95,30 +190,42 @@ class ConfigLoader:
     # --------------------------------------------------------
     # 生成默认配置文件
     # --------------------------------------------------------
-    def generate_default_yaml(self, path: str) -> None:
-        """生成默认配置YAML文件。"""
+    def generate_default_yaml(self, path: str, template: Optional[str] = None) -> None:
+        """生成配置YAML文件。
+
+        Args:
+            path: 输出文件路径
+            template: 模板名称（None=使用默认配置）
+        """
         try:
             import yaml
         except ImportError as e:
             raise ImportError("需要PyYAML: pip install pyyaml") from e
 
-        # 带注释的默认配置
-        config_with_comments = {
-            "grid_size": self.defaults["grid_size"],
-            "n_agents": self.defaults["n_agents"],
-            "db_path": self.defaults["db_path"],
-            "checkpoint_interval": self.defaults["checkpoint_interval"],
-            "skill_abstract_interval": self.defaults["skill_abstract_interval"],
-            "meta_learn_interval": self.defaults["meta_learn_interval"],
-            "distill_interval": self.defaults["distill_interval"],
-            "evolve_interval": self.defaults["evolve_interval"],
-            "coalition_interval": self.defaults["coalition_interval"],
-            "max_iterations": self.defaults["max_iterations"],
-            "seed": self.defaults["seed"],
-        }
+        if template is not None:
+            config_with_comments = get_template(template)
+            description = CONFIG_TEMPLATES[template].get("_description", "")
+        else:
+            # 带注释的默认配置
+            config_with_comments = {
+                "grid_size": self.defaults["grid_size"],
+                "n_agents": self.defaults["n_agents"],
+                "db_path": self.defaults["db_path"],
+                "checkpoint_interval": self.defaults["checkpoint_interval"],
+                "skill_abstract_interval": self.defaults["skill_abstract_interval"],
+                "meta_learn_interval": self.defaults["meta_learn_interval"],
+                "distill_interval": self.defaults["distill_interval"],
+                "evolve_interval": self.defaults["evolve_interval"],
+                "coalition_interval": self.defaults["coalition_interval"],
+                "max_iterations": self.defaults["max_iterations"],
+                "seed": self.defaults["seed"],
+            }
+            description = "默认配置：平衡的功能与性能"
+
         header = (
-            "# Agent Whitepaper 永续自主进化系统配置\n"
-            "# 修改此文件后运行: agentwp run --config config.yaml\n\n"
+            f"# Agent Whitepaper 永续自主进化系统配置\n"
+            f"# 模板: {template or 'default'} - {description}\n"
+            f"# 修改此文件后运行: agentwp run --config config.yaml\n\n"
         )
         with open(path, "w", encoding="utf-8") as f:
             f.write(header)
