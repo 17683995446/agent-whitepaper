@@ -28,6 +28,11 @@ from .config import (
     list_templates,
     load_config,
 )
+from .progress import (
+    ProgressReporter,
+    SilentReporter,
+    predict_phases,
+)
 
 
 # ============================================================
@@ -171,47 +176,71 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     # 运行
     report_interval = args.report_interval
-    start_time = time.time()
+    is_quiet = getattr(args, "quiet", False)
+
+    # 创建进度报告器
+    if is_quiet:
+        reporter = SilentReporter(
+            total=config.max_iterations,
+            report_interval=report_interval,
+        )
+    else:
+        reporter = ProgressReporter(
+            total=config.max_iterations,
+            report_interval=report_interval,
+            output=lambda msg: print(f"  {msg}"),
+        )
 
     try:
         if config.max_iterations is not None:
             # 有限迭代模式
             for i in range(config.max_iterations):
                 orch.run_iteration()
-                if (i + 1) % report_interval == 0:
-                    elapsed = time.time() - start_time
+                if reporter.should_report(i + 1):
                     snap = orch.metrics.get_latest()
-                    if snap:
-                        print(
-                            f"  [{i + 1}/{config.max_iterations}] "
-                            f"成功率={snap.avg_success_rate:.3f} "
-                            f"技能={snap.skill_count} "
-                            f"Q条目={snap.total_q_entries} "
-                            f"健康={snap.health_score:.3f} "
-                            f"({elapsed:.1f}s)"
-                        )
+                    phases = predict_phases(
+                        iteration=i + 1,
+                        skill_abstract_interval=config.skill_abstract_interval,
+                        meta_learn_interval=config.meta_learn_interval,
+                        coalition_interval=config.coalition_interval,
+                        distill_interval=config.distill_interval,
+                        evolve_interval=config.evolve_interval,
+                        checkpoint_interval=config.checkpoint_interval,
+                        n_agents=config.n_agents,
+                    )
+                    reporter.report(i + 1, snap, phases)
         else:
             # 无限模式
-            print("  进入永续运行模式（Ctrl+C 停止）...")
+            if not is_quiet:
+                print("  进入永续运行模式（Ctrl+C 停止）...")
             count = 0
             while True:
                 orch.run_iteration()
                 count += 1
-                if count % report_interval == 0:
-                    elapsed = time.time() - start_time
+                if reporter.should_report(count):
                     snap = orch.metrics.get_latest()
-                    if snap:
-                        print(
-                            f"  [{count}] "
-                            f"成功率={snap.avg_success_rate:.3f} "
-                            f"技能={snap.skill_count} "
-                            f"Q条目={snap.total_q_entries} "
-                            f"({elapsed:.1f}s)"
-                        )
+                    phases = predict_phases(
+                        iteration=count,
+                        skill_abstract_interval=config.skill_abstract_interval,
+                        meta_learn_interval=config.meta_learn_interval,
+                        coalition_interval=config.coalition_interval,
+                        distill_interval=config.distill_interval,
+                        evolve_interval=config.evolve_interval,
+                        checkpoint_interval=config.checkpoint_interval,
+                        n_agents=config.n_agents,
+                    )
+                    reporter.report(count, snap, phases)
     except KeyboardInterrupt:
-        print("\n  收到中断信号，正在停止...")
+        if not is_quiet:
+            print("\n  收到中断信号，正在停止...")
 
     orch.stop("cli")
+
+    # 进度完成
+    if not is_quiet:
+        final_snap = orch.metrics.get_latest()
+        reporter.finish(final_snap)
+
     # 最终报告
     _print_section("最终报告")
     report = orch.get_metrics()
