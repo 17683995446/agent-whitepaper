@@ -33,6 +33,7 @@ from .progress import (
     SilentReporter,
     predict_phases,
 )
+from .wizard import ConfigWizard
 
 
 # ============================================================
@@ -447,7 +448,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     # 6. CLI子命令检查
     print("\nCLI 子命令:")
     parser = build_parser()
-    subcommands = ["init", "run", "demo", "status", "doctor"]
+    subcommands = ["init", "run", "demo", "status", "doctor", "wizard"]
     for cmd in subcommands:
         # 检查子命令是否注册
         try:
@@ -495,6 +496,30 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     else:
         print("\n  所有检查通过，环境正常！")
         return 0
+
+
+def cmd_wizard(args: argparse.Namespace) -> int:
+    """交互式配置向导。
+
+    第一性原理：
+        "Guide the user"——对话式引导优于记忆参数。
+        向导通过问答引导用户完成配置，降低认知负荷。
+    """
+    output_path = args.output
+    # 支持测试注入 input/output 函数
+    input_func = getattr(args, "_input_func", None) or input
+    output_func = getattr(args, "_output_func", None) or print
+    wizard = ConfigWizard(input_func=input_func, output_func=output_func)
+    try:
+        config = wizard.run()
+        wizard.save(config, output_path)
+    except (KeyboardInterrupt, EOFError):
+        output_func("\n  向导已取消")
+        return 1
+    except ConfigError as e:
+        output_func(f"配置错误: {e}")
+        return 1
+    return 0
 
 
 # ============================================================
@@ -600,6 +625,16 @@ def build_parser() -> argparse.ArgumentParser:
         "doctor", help="诊断环境（检查依赖、导入、配置等）"
     )
     p_doctor.set_defaults(func=cmd_doctor)
+
+    # wizard
+    p_wizard = subparsers.add_parser(
+        "wizard", help="交互式配置向导（问答式生成配置）"
+    )
+    p_wizard.add_argument(
+        "-o", "--output", default="config.yaml",
+        help="输出配置文件路径（默认: config.yaml）"
+    )
+    p_wizard.set_defaults(func=cmd_wizard)
 
     return parser
 

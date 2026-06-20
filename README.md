@@ -96,6 +96,9 @@ agentwp init --template quick-test -o config.yaml
 # 列出所有可用模板
 agentwp init --list-templates
 
+# 交互式配置向导（问答式生成配置）
+agentwp wizard -o config.yaml
+
 # 快速演示（30轮迭代）
 agentwp demo
 

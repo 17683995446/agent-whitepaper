@@ -18,6 +18,8 @@
     create_system: 从模板创建系统
     get_status: 查询运行状态
     list_available_templates: 列出模板及描述
+    ConfigWizard: 交互式配置向导
+    run_wizard: 运行向导便捷函数
     build_parser: 构建CLI参数解析器
     main: CLI主入口
     cmd_init: init子命令
@@ -57,6 +59,7 @@ from .progress import (
     predict_phases,
     render_progress_bar,
 )
+from .wizard import ConfigWizard, run_wizard
 
 __all__ = [
     "ConfigValidationError",
@@ -76,6 +79,8 @@ __all__ = [
     "create_system",
     "get_status",
     "list_available_templates",
+    "ConfigWizard",
+    "run_wizard",
     "build_parser",
     "main",
     "cmd_init",
