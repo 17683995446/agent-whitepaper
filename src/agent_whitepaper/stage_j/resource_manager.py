@@ -24,6 +24,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
 
+from agent_whitepaper._logging import get_logger
+
+logger = get_logger(__name__)
+
 
 # ============================================================
 # 资源限制配置
@@ -99,11 +103,15 @@ class ResourceManager:
         self._psutil_available = self._check_psutil()
 
     def _check_psutil(self) -> bool:
-        """检查psutil是否可用。"""
+        """检查psutil是否可用，缺失时记录友好提示。"""
         try:
             import psutil  # noqa: F401
             return True
         except ImportError:
+            logger.warning(
+                "psutil 未安装，CPU/内存监控将降级（仅跟踪迭代/缓冲区/技能库大小）。"
+                "安装方式: pip install psutil"
+            )
             return False
 
     def monitor(
