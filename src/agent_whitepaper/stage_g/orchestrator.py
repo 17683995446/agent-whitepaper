@@ -25,6 +25,8 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
+from agent_whitepaper._logging import get_logger
+
 # 阶段A：单Agent闭环
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.environment import GridWorld
@@ -89,6 +91,9 @@ class OrchestratorStatus(Enum):
 # ============================================================
 # 全系统编排器
 # ============================================================
+logger = get_logger(__name__)
+
+
 class SystemOrchestrator:
     """全系统编排器：将A-F所有能力编排为统一永续自主进化系统。
 
@@ -360,8 +365,8 @@ class SystemOrchestrator:
                     self.skill_abstractor.abstract_from_episodes(
                         successful, self.skill_library
                     )
-        except Exception:  # 组件降级：技能抽象失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：技能抽象失败不影响主循环
+            logger.debug("技能抽象失败: %s", e, exc_info=True)
 
     def _meta_learn(self) -> None:
         """阶段B：元学习参数调整。"""
@@ -383,8 +388,8 @@ class SystemOrchestrator:
                     # 应用元参数到Agent
                     params = self.meta_learner.params
                     agent.q_table.lr = params.learning_rate
-        except Exception:  # 组件降级：元学习失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：元学习失败不影响主循环
+            logger.debug("元学习失败: %s", e, exc_info=True)
 
     def _try_coalition(self) -> None:
         """阶段C：尝试为复杂任务组建联盟。"""
@@ -401,8 +406,8 @@ class SystemOrchestrator:
                     if agent:
                         self.task_executor.execute_task(task, agent, self.env)
                 coalition.status = CoalitionStatus.COMPLETED
-        except Exception:  # 组件降级：联盟组建失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：联盟组建失败不影响主循环
+            logger.debug("联盟组建失败: %s", e, exc_info=True)
 
     def _distill_knowledge(self) -> None:
         """阶段E：跨Agent知识蒸馏。"""
@@ -429,8 +434,8 @@ class SystemOrchestrator:
                 "injected_states",
                 getattr(distill_result, "states_distilled", 0),
             )
-        except Exception:  # 组件降级：知识蒸馏失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：知识蒸馏失败不影响主循环
+            logger.debug("知识蒸馏失败: %s", e, exc_info=True)
 
     def _evolve(self) -> None:
         """阶段F：自主进化检测与恢复。"""
@@ -440,8 +445,8 @@ class SystemOrchestrator:
                 log = self.evolution_controller.evolution_step(agent, self.env)
                 if log.get("recovery_strategy", "none") != "none":
                     self.metrics.increment("recovery_count")
-        except Exception:  # 组件降级：自主进化失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：自主进化失败不影响主循环
+            logger.debug("自主进化失败: %s", e, exc_info=True)
 
     def _checkpoint(self) -> None:
         """阶段D：创建检查点。"""
@@ -455,8 +460,8 @@ class SystemOrchestrator:
                 "health_report": self.health_monitor.get_health_report(),
             }
             self.persistence.create_checkpoint(f"迭代 {self._iteration}", snapshot)
-        except Exception:  # 组件降级：检查点失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：检查点失败不影响主循环
+            logger.debug("检查点创建失败: %s", e, exc_info=True)
 
     def _collect_metrics(self) -> None:
         """阶段G：采集指标快照。"""
@@ -523,8 +528,8 @@ class SystemOrchestrator:
                 status=self.status.value,
             )
             self.metrics.record(snapshot)
-        except Exception:  # 组件降级：指标采集失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：指标采集失败不影响主循环
+            logger.debug("指标采集失败: %s", e, exc_info=True)
 
     # --------------------------------------------------------
     # 永续运行主循环

@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, Optional
 
+from agent_whitepaper._logging import get_logger
 from agent_whitepaper.stage_a.agent import SelfDrivenAgent
 from agent_whitepaper.stage_a.environment import GridWorld
 from agent_whitepaper.stage_b.meta_learner import MetaLearner
@@ -27,6 +28,8 @@ from agent_whitepaper.stage_b.subgoal_manager import LongTaskExecutor
 from .health_monitor import HealthMonitor, HealthStatus
 from .persistence import PersistenceEngine
 from .scheduler import ScheduledTaskStatus, TaskScheduler
+
+logger = get_logger(__name__)
 
 
 # ============================================================
@@ -363,8 +366,8 @@ class PerpetualRuntime:
                     self.skill_abstractor.abstract_from_episodes(
                         successful, self.skill_library
                     )
-        except Exception:  # 组件降级：技能抽象失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：技能抽象失败不影响主循环
+            logger.debug("技能抽象失败: %s", e, exc_info=True)
 
     def _meta_learn(self) -> None:
         """元学习参数调整。"""
@@ -376,8 +379,8 @@ class PerpetualRuntime:
                     self.meta_learner.record_episode(reward, success, fe)
                 if self.meta_learner.should_adapt():
                     self.meta_learner.adapt_parameters()
-        except Exception:  # 组件降级：元学习失败不影响主循环（Stage T 将添加日志）
-            pass
+        except Exception as e:  # 组件降级：元学习失败不影响主循环
+            logger.debug("元学习失败: %s", e, exc_info=True)
 
     def run(self) -> None:
         """永续运行主循环。"""

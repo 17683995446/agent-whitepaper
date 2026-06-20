@@ -46,6 +46,7 @@ from ._exceptions import (
     StateSerializationError,
     TransactionError,
 )
+from ._logging import configure_logging, get_logger
 from ._protocols import AgentProtocol, MemoryProtocol, PolicyProtocol
 from .stage_a import GridWorld, QTable, SelfDrivenAgent
 from .stage_b import MetaLearner, Skill, SkillLibrary, TaskDecomposer
@@ -136,6 +137,9 @@ __all__ = [
     "PolicyProtocol",
     "MemoryProtocol",
     "AgentProtocol",
+    # 日志配置（阶段T）
+    "get_logger",
+    "configure_logging",
 ]
 
 __version__ = "0.1.0"

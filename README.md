@@ -140,6 +140,8 @@ from agent_whitepaper import (
     ComponentError, RecoveryError, CLIError,
     # 抽象接口
     PolicyProtocol, MemoryProtocol, AgentProtocol,
+    # 日志配置
+    get_logger, configure_logging,
 )
 ```
 
@@ -197,6 +199,28 @@ AgentWhitepaperError
 - **接口分离**：高层模块依赖抽象，不依赖具体实现
 - **可替换性**：任何满足接口的实现都可替换（如 QTable → 神经网络策略）
 - **可测试性**：测试可 mock 接口而非依赖具体实现
+
+## 日志与可观测性
+
+系统在 `_logging.py` 中提供统一日志配置（阶段T），替代散落的 `print`：
+
+```python
+from agent_whitepaper import get_logger, configure_logging
+import logging
+
+# 配置日志级别（默认 WARNING，调试时设为 DEBUG）
+configure_logging(level=logging.DEBUG)
+
+# 在任意模块中获取 logger
+logger = get_logger(__name__)
+logger.debug("技能抽象失败: %s", e, exc_info=True)
+```
+
+日志规范：
+- **用户面输出**（CLI/demos）：保留 `print`（面向用户的输出）
+- **系统内部事件**：使用 `logging`（面向开发者的诊断）
+- **降级路径**（`except Exception`）：记录 `DEBUG`（预期失败，仅调试时可见）
+- **关键状态转换**：记录 `INFO`（启动/停止/恢复）
 
 ## 依赖关系
 
