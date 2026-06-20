@@ -24,4 +24,9 @@ setup(
             "pytest-cov>=4.0.0",
         ],
     },
+    entry_points={
+        "console_scripts": [
+            "agentwp=agent_whitepaper.stage_h.cli:main",
+        ],
+    },
 )
