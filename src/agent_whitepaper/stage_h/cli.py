@@ -305,6 +305,142 @@ def cmd_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_doctor(args: argparse.Namespace) -> int:
+    """诊断环境：检查依赖、导入、配置等是否正常。
+
+    第一性原理：
+        "Fail fast, fail helpfully"——主动诊断优于被动排错。
+        用户遇到问题时，doctor命令提供一站式环境检查，
+        避免在多个地方分别排查。
+    """
+    _print_section("Agent Whitepaper 环境诊断")
+
+    checks_passed = 0
+    checks_failed = 0
+    checks_warned = 0
+
+    def check(name: str, status: str, detail: str = "") -> None:
+        nonlocal checks_passed, checks_failed, checks_warned
+        symbol = {"pass": "[OK]", "fail": "[FAIL]", "warn": "[WARN]"}[status]
+        if status == "pass":
+            checks_passed += 1
+        elif status == "fail":
+            checks_failed += 1
+        else:
+            checks_warned += 1
+        line = f"  {symbol} {name}"
+        if detail:
+            line += f": {detail}"
+        print(line)
+
+    # 1. Python版本检查
+    print("\nPython 环境:")
+    py_version = sys.version.split()[0]
+    version_tuple = sys.version_info
+    if version_tuple >= (3, 8):
+        check("Python 版本", "pass", f"{py_version} (要求 >= 3.8)")
+    else:
+        check("Python 版本", "fail", f"{py_version} (要求 >= 3.8)")
+
+    # 2. 核心依赖检查
+    print("\n核心依赖:")
+    core_deps = [("numpy", "numpy"), ("yaml", "pyyaml"), ("psutil", "psutil")]
+    for import_name, pip_name in core_deps:
+        try:
+            mod = __import__(import_name)
+            version = getattr(mod, "__version__", "unknown")
+            check(import_name, "pass", f"v{version}")
+        except ImportError:
+            check(import_name, "fail", f"未安装 (pip install {pip_name})")
+
+    # 3. 可选依赖检查
+    print("\n可选依赖:")
+    optional_deps = [("msgpack", "msgpack"), ("sympy", "sympy")]
+    for import_name, pip_name in optional_deps:
+        try:
+            __import__(import_name)
+            check(import_name, "pass")
+        except ImportError:
+            check(import_name, "warn", f"未安装 (pip install {pip_name})，部分功能降级")
+
+    # 4. 核心模块导入检查
+    print("\n核心模块导入:")
+    core_modules = [
+        ("agent_whitepaper", "顶层包"),
+        ("agent_whitepaper.stage_a", "单Agent闭环"),
+        ("agent_whitepaper.stage_g", "全系统集成"),
+        ("agent_whitepaper.stage_h", "配置化与CLI"),
+    ]
+    for module_name, desc in core_modules:
+        try:
+            __import__(module_name)
+            check(desc, "pass", module_name)
+        except ImportError as e:
+            check(desc, "fail", f"{module_name}: {e}")
+
+    # 5. 公共API可用性检查
+    print("\n公共API:")
+    try:
+        from agent_whitepaper import GridWorld, SelfDrivenAgent, __version__
+        check("版本号", "pass", __version__)
+        check("GridWorld", "pass")
+        check("SelfDrivenAgent", "pass")
+    except ImportError as e:
+        check("公共API", "fail", str(e))
+
+    # 6. CLI子命令检查
+    print("\nCLI 子命令:")
+    parser = build_parser()
+    subcommands = ["init", "run", "demo", "status", "doctor"]
+    for cmd in subcommands:
+        # 检查子命令是否注册
+        try:
+            # 通过解析 --help 验证子命令存在
+            sub_parser = parser._subparsers._group_actions[0].choices.get(cmd)
+            if sub_parser is not None:
+                check(f"agentwp {cmd}", "pass")
+            else:
+                check(f"agentwp {cmd}", "fail", "未注册")
+        except Exception:  # 防火墙层：parser内部结构访问可能失败
+            check(f"agentwp {cmd}", "fail", "检查失败")
+
+    # 7. 功能性检查
+    print("\n功能性验证:")
+    try:
+        env = GridWorld(size=3, seed=42)
+        obs = env.reset()
+        assert obs.shape == (18,), f"观测维度错误: {obs.shape}"
+        check("GridWorld 运行", "pass")
+    except Exception as e:  # 防火墙层：功能性验证可能因环境问题失败
+        check("GridWorld 运行", "fail", str(e))
+
+    try:
+        agent = SelfDrivenAgent(
+            action_space=env.action_space, n_states=9, seed=42
+        )
+        agent.run_episode(env, max_steps=10)
+        check("SelfDrivenAgent 运行", "pass")
+    except Exception as e:  # 防火墙层：功能性验证可能因环境问题失败
+        check("SelfDrivenAgent 运行", "fail", str(e))
+
+    # 8. 总结
+    print("\n" + "=" * 60)
+    total = checks_passed + checks_failed + checks_warned
+    print(f"  诊断完成: {total} 项检查")
+    print(f"  通过: {checks_passed}  失败: {checks_failed}  警告: {checks_warned}")
+
+    if checks_failed > 0:
+        print("\n  请修复失败的检查项后重试。")
+        print("  参考: TROUBLESHOOTING.md")
+        return 1
+    elif checks_warned > 0:
+        print("\n  警告项不影响核心功能，可选择性修复。")
+        return 0
+    else:
+        print("\n  所有检查通过，环境正常！")
+        return 0
+
+
 # ============================================================
 # 主入口
 # ============================================================
@@ -393,6 +529,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="数据库路径（默认: agent_system.db）"
     )
     p_status.set_defaults(func=cmd_status)
+
+    # doctor
+    p_doctor = subparsers.add_parser(
+        "doctor", help="诊断环境（检查依赖、导入、配置等）"
+    )
+    p_doctor.set_defaults(func=cmd_doctor)
 
     return parser
 
