@@ -79,7 +79,7 @@ class DegradationDetector:
         baseline_window: int = 100,
         degradation_threshold: float = 0.15,
         trend_threshold: float = -0.01
-    ):
+    ) -> None:
         if window_size < 10:
             raise ValueError("window_size 必须 >= 10")
         self.window_size = window_size

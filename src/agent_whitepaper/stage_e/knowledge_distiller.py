@@ -65,7 +65,7 @@ class KnowledgeDistiller:
     4. consensus: 只保留所有教师都认为高价值的状态-动作
     """
 
-    def __init__(self, grid_size: int = 5):
+    def __init__(self, grid_size: int = 5) -> None:
         self.grid_size = grid_size
 
     def distill(
@@ -230,7 +230,7 @@ class CollectiveLearningCoordinator:
     5. 技能迁移：同时迁移技能库
     """
 
-    def __init__(self, grid_size: int = 5):
+    def __init__(self, grid_size: int = 5) -> None:
         self.grid_size = grid_size
         self.knowledge_base = QTableKnowledgeBase()
         self.distiller = KnowledgeDistiller(grid_size=grid_size)

@@ -55,7 +55,7 @@ def print_metric(name: str, value, fmt: str = ".4f") -> None:
 # ============================================================
 # 能力一：自驱完成长任务
 # ============================================================
-def demo_capability_1_self_driven_long_task():
+def demo_capability_1_self_driven_long_task() -> None:
     """能力一：Agent自驱学会完成长任务。"""
     print_header("能力一：自驱完成长任务")
     print("目标：Agent在5x5网格中，自驱学会从(0,0)到达(4,4)")
@@ -121,7 +121,7 @@ def demo_capability_1_self_driven_long_task():
 # ============================================================
 # 能力二：自主增强技能
 # ============================================================
-def demo_capability_2_skill_enhancement(agent: SelfDrivenAgent, env: GridWorld):
+def demo_capability_2_skill_enhancement(agent: SelfDrivenAgent, env: GridWorld) -> None:
     """能力二：Agent从经验中抽象并增强技能。"""
     print_header("能力二：自主增强技能")
     print("目标：从成功情节抽象技能，元学习优化学习过程")
@@ -208,7 +208,7 @@ def demo_capability_2_skill_enhancement(agent: SelfDrivenAgent, env: GridWorld):
 # ============================================================
 # 能力三：操作多Agent协作
 # ============================================================
-def demo_capability_3_multi_agent_collaboration(skill_library: SkillLibrary):
+def demo_capability_3_multi_agent_collaboration(skill_library: SkillLibrary) -> None:
     """能力三：多Agent协作完成任务，技能共享。"""
     print_header("能力三：操作多Agent协作完成任务")
     print("目标：3个Agent协作完成多航点任务，共享技能")
@@ -356,7 +356,7 @@ def demo_capability_3_multi_agent_collaboration(skill_library: SkillLibrary):
 # ============================================================
 # 综合验证
 # ============================================================
-def demo_final_verification():
+def demo_final_verification() -> None:
     """综合验证：三大能力的协同效应。"""
     print_header("综合验证：三大能力协同效应")
     print("验证：技能增强后，新Agent能更快学会任务")
@@ -420,7 +420,7 @@ def demo_final_verification():
 # ============================================================
 # 主函数
 # ============================================================
-def main():
+def main() -> None:
     print("=" * 70)
     print("  自驱永续进化Agent系统 - 端到端能力演示")
     print("  三大能力：自驱长任务 + 技能增强 + 多Agent协作")

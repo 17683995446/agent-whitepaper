@@ -58,7 +58,7 @@ class SkillQValueInjector:
         grid_size: int = 5,
         gamma: float = 0.9,
         injection_scale: float = 1.0
-    ):
+    ) -> None:
         self.grid_size = grid_size
         self.gamma = gamma
         self.injection_scale = injection_scale

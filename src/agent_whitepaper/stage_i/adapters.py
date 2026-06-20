@@ -207,7 +207,7 @@ class MultiEnvironmentTrainer:
     4. 跨环境的元学习（学习如何学习）共享
     """
 
-    def __init__(self, agent: SelfDrivenAgent):
+    def __init__(self, agent: SelfDrivenAgent) -> None:
         self.agent = agent
         self._adapters: List[Tuple[str, EnvironmentAdapter]] = []
         self._env_index = 0

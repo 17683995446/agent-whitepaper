@@ -33,7 +33,7 @@ class QTable:
     状态用离散索引表示（如GridWorld的格子编号）。
     """
 
-    def __init__(self, n_states: int, n_actions: int, learning_rate: float = 0.1):
+    def __init__(self, n_states: int, n_actions: int, learning_rate: float = 0.1) -> None:
         if n_states < 1 or n_actions < 1:
             raise ValueError("状态数和动作数必须 >= 1")
         if not (0 < learning_rate <= 1):
@@ -112,7 +112,7 @@ class DriveState:
     social: float = 0.5
     exploration: float = 0.5
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         for name, val in [("safety", self.safety), ("social", self.social),
                           ("exploration", self.exploration)]:
             if not (0 <= val <= 1):
@@ -140,7 +140,7 @@ class DriveBasedPolicy:
         action_space: DiscreteActionSpace,
         min_epsilon: float = 0.05,
         max_epsilon: float = 1.0
-    ):
+    ) -> None:
         if not (0 <= min_epsilon <= max_epsilon <= 1):
             raise ValueError("必须 0 <= min_epsilon <= max_epsilon <= 1")
         self.action_space = action_space

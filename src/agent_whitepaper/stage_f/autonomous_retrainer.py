@@ -70,7 +70,7 @@ class CheckpointManager:
     当Agent表现好时保存检查点，退化时可以回滚。
     """
 
-    def __init__(self, max_checkpoints: int = 10):
+    def __init__(self, max_checkpoints: int = 10) -> None:
         self.max_checkpoints = max_checkpoints
         self._checkpoints: List[Tuple[float, QTableSnapshot, float]] = []
         # (timestamp, snapshot, performance_score)
@@ -133,7 +133,7 @@ class AutonomousRetrainer:
         detector: Optional[DegradationDetector] = None,
         checkpoint_manager: Optional[CheckpointManager] = None,
         collective_coordinator: Optional[CollectiveLearningCoordinator] = None
-    ):
+    ) -> None:
         self.detector = detector or DegradationDetector()
         self.checkpoint_mgr = checkpoint_manager or CheckpointManager()
         self.collective = collective_coordinator
@@ -316,7 +316,7 @@ class AutonomousEvolutionController:
         self,
         grid_size: int = 5,
         collective_coordinator: Optional[CollectiveLearningCoordinator] = None
-    ):
+    ) -> None:
         self.grid_size = grid_size
         self.detector = DegradationDetector()
         self.checkpoint_mgr = CheckpointManager()

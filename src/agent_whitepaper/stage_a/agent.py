@@ -88,7 +88,7 @@ class SelfDrivenAgent:
         gamma: float = 0.99,
         min_epsilon: float = 0.05,
         seed: Optional[int] = None
-    ):
+    ) -> None:
         self.action_space = action_space
         self.q_table = QTable(n_states, action_space.n, learning_rate)
         self.policy = DriveBasedPolicy(action_space, min_epsilon=min_epsilon)

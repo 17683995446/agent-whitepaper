@@ -90,7 +90,7 @@ class TaskDecomposer:
     3. 自适应分解：根据Agent能力动态调整子目标粒度
     """
 
-    def __init__(self, grid_size: int = 5):
+    def __init__(self, grid_size: int = 5) -> None:
         self.grid_size = grid_size
 
     def decompose_path_task(

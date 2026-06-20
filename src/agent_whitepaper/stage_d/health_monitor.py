@@ -123,7 +123,7 @@ class CircuitBreaker:
         failure_threshold: int = 5,
         recovery_timeout: float = 30.0,
         half_open_max_calls: int = 3
-    ):
+    ) -> None:
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.half_open_max_calls = half_open_max_calls
@@ -195,7 +195,7 @@ class HealthMonitor:
     5. 熔断保护
     """
 
-    def __init__(self, heartbeat_timeout: float = 10.0):
+    def __init__(self, heartbeat_timeout: float = 10.0) -> None:
         self.heartbeat_timeout = heartbeat_timeout
         self._components: Dict[str, ComponentHealth] = {}
         self._circuit_breakers: Dict[str, CircuitBreaker] = {}
@@ -326,7 +326,7 @@ def safe_execute(
     monitor: HealthMonitor,
     component: str,
     default_return: Any = None
-):
+) -> Callable:
     """安全执行装饰器：捕获异常并报告给监控器。
 
     用法：
@@ -335,7 +335,7 @@ def safe_execute(
             ...
     """
     def decorator(func: Callable) -> Callable:
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Any:
             breaker = monitor._circuit_breakers.get(component)
             if breaker and not breaker.is_callable:
                 return default_return

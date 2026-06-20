@@ -87,7 +87,7 @@ class ReportGenerator:
     3. summary: 简短摘要
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def generate_text_report(self, result: LongRunResult) -> str:

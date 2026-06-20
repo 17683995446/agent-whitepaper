@@ -47,7 +47,7 @@ class AgentCapability:
     performance_score: float = 0.5
     drive_profile: Tuple[float, float, float] = (0.5, 0.5, 0.5)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if not (0 <= self.performance_score <= 1):
             raise ValueError("performance_score 必须 ∈ [0,1]")
         for d in self.drive_profile:
@@ -94,7 +94,7 @@ class AgentRegistry:
     5. 状态管理
     """
 
-    def __init__(self, heartbeat_timeout: float = 30.0):
+    def __init__(self, heartbeat_timeout: float = 30.0) -> None:
         if heartbeat_timeout <= 0:
             raise ValueError("heartbeat_timeout 必须 > 0")
         self.heartbeat_timeout = heartbeat_timeout

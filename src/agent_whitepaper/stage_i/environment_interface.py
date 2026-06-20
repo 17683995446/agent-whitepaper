@@ -99,7 +99,7 @@ class GridWorldStateEncoder(StateEncoder):
     状态 = agent位置索引
     """
 
-    def __init__(self, grid_size: int):
+    def __init__(self, grid_size: int) -> None:
         if grid_size < 2:
             raise ValueError("grid_size 必须 >= 2")
         self.grid_size = grid_size
@@ -126,7 +126,7 @@ class BitmapStateEncoder(StateEncoder):
     例如：3个步骤，观测=[1,0,1] → 状态索引=5 (二进制101)
     """
 
-    def __init__(self, n_bits: int):
+    def __init__(self, n_bits: int) -> None:
         if n_bits < 1:
             raise ValueError("n_bits 必须 >= 1")
         if n_bits > 20:
@@ -160,7 +160,7 @@ class EnvironmentAdapter:
     Agent只需关心状态索引，不需要知道观测的具体格式。
     """
 
-    def __init__(self, env: EnvironmentProtocol, encoder: StateEncoder):
+    def __init__(self, env: EnvironmentProtocol, encoder: StateEncoder) -> None:
         self.env = env
         self.encoder = encoder
 

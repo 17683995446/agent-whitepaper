@@ -98,7 +98,7 @@ class MetaLearner:
         initial_params: Optional[MetaParameters] = None,
         window_size: int = 20,
         adaptation_rate: float = 0.1
-    ):
+    ) -> None:
         if window_size < 5:
             raise ValueError("window_size 必须 >= 5")
         if not (0 < adaptation_rate <= 0.5):

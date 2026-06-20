@@ -97,7 +97,7 @@ class LongRunDemo:
         print(demo.format_report(result))
     """
 
-    def __init__(self, config: Optional[LongRunConfig] = None):
+    def __init__(self, config: Optional[LongRunConfig] = None) -> None:
         self.config = config or LongRunConfig()
         self.orchestrator: Optional[SystemOrchestrator] = None
 
@@ -277,7 +277,14 @@ class LongRunDemo:
         lines.append("=" * 70)
         return "\n".join(lines)
 
-    def _format_ascii_curve(self, lines, data, label, min_val, max_val):
+    def _format_ascii_curve(
+        self,
+        lines: List[str],
+        data: List[float],
+        label: str,
+        min_val: float,
+        max_val: float,
+    ) -> None:
         """格式化ASCII曲线图。"""
         if not data:
             lines.append(f"  {label}: 无数据")

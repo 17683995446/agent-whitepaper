@@ -121,7 +121,7 @@ class RoleAssigner:
     4. 已分配的Agent不再参与后续分配
     """
 
-    def __init__(self, registry: AgentRegistry):
+    def __init__(self, registry: AgentRegistry) -> None:
         self.registry = registry
 
     def compute_match_score(

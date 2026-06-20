@@ -68,7 +68,7 @@ class EpisodicBuffer:
     - 提取完整情节
     """
 
-    def __init__(self, capacity: int = 10000):
+    def __init__(self, capacity: int = 10000) -> None:
         if capacity < 1:
             raise ValueError(f"容量必须 >= 1，收到 {capacity}")
         self.capacity = capacity

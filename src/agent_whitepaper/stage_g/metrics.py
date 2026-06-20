@@ -106,7 +106,7 @@ class MetricsCollector:
     5. export(): 导出为JSON用于外部可视化
     """
 
-    def __init__(self, max_history: int = 10000):
+    def __init__(self, max_history: int = 10000) -> None:
         self.max_history = max_history
         self._snapshots: List[MetricsSnapshot] = []
         # 累计计数器（不随快照重置）

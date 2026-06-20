@@ -69,7 +69,7 @@ class SharedSkillLibrary:
     5. 验证：多Agent验证后标记为可信
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._shared_skills: Dict[str, SharedSkill] = {}
         self._index_by_precondition: Dict[Tuple[int, ...], List[str]] = {}
         self._index_by_specialization: Dict[str, List[str]] = {}

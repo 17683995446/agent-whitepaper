@@ -55,7 +55,7 @@ class FunctionCallEnvironment(EnvironmentProtocol):
         max_steps: int = 50,
         seed: Optional[int] = None,
         function_names: Optional[List[str]] = None,
-    ):
+    ) -> None:
         if n_functions < 2:
             raise ValueError("n_functions 必须 >= 2")
         if n_functions > 15:

@@ -85,7 +85,7 @@ class CoalitionFormer:
         registry: AgentRegistry,
         message_bus: MessageBus,
         role_assigner: Optional[RoleAssigner] = None
-    ):
+    ) -> None:
         self.registry = registry
         self.message_bus = message_bus
         self.role_assigner = role_assigner or RoleAssigner(registry)

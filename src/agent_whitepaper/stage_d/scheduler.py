@@ -86,7 +86,7 @@ class TaskGenerator:
     4. 复合任务：多目标访问
     """
 
-    def __init__(self, grid_size: int = 5, seed: Optional[int] = None):
+    def __init__(self, grid_size: int = 5, seed: Optional[int] = None) -> None:
         self.grid_size = grid_size
         self._rng = np.random.RandomState(seed)
         self.decomposer = TaskDecomposer(grid_size=grid_size)
@@ -177,7 +177,7 @@ class TaskScheduler:
         self,
         persistence: Optional[PersistenceEngine] = None,
         max_queue_size: int = 100
-    ):
+    ) -> None:
         self.persistence = persistence
         self.max_queue_size = max_queue_size
         self._task_queue: deque = deque()

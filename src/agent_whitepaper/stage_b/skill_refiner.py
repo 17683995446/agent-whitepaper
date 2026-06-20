@@ -79,7 +79,7 @@ class SkillRefiner:
         mutation_rate: float = 0.1,
         min_effectiveness: float = 0.3,
         max_variants: int = 5
-    ):
+    ) -> None:
         if not (0 <= mutation_rate <= 1):
             raise ValueError("mutation_rate 必须 ∈ [0,1]")
         if not (0 <= min_effectiveness <= 1):

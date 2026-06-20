@@ -91,7 +91,7 @@ class ResourceManager:
         self,
         limits: Optional[ResourceLimits] = None,
         start_time: Optional[float] = None
-    ):
+    ) -> None:
         self.limits = limits or ResourceLimits()
         self._start_time = start_time or time.time()
         self._usage_history: List[ResourceUsage] = []
@@ -298,7 +298,7 @@ class ResourceAwareController:
         self,
         resource_manager: ResourceManager,
         safety_monitor=None,
-    ):
+    ) -> None:
         self.resource_mgr = resource_manager
         self.safety_monitor = safety_monitor
         self._iteration = 0

@@ -102,7 +102,7 @@ class GridWorld(Environment):
         start: Optional[Tuple[int, int]] = None,
         max_steps: int = 100,
         seed: Optional[int] = None
-    ):
+    ) -> None:
         if size < 2:
             raise ValueError(f"网格大小必须 >= 2，收到 {size}")
         self.size = size

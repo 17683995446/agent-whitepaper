@@ -20,7 +20,7 @@ import pickle
 import sqlite3
 import time
 from contextlib import contextmanager
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 import numpy as np
 
@@ -105,7 +105,7 @@ class PersistenceEngine:
     5. 系统检查点（全量快照）
     """
 
-    def __init__(self, db_path: str = ":memory:"):
+    def __init__(self, db_path: str = ":memory:") -> None:
         """
         Args:
             db_path: 数据库文件路径，":memory:"为内存数据库
@@ -129,7 +129,7 @@ class PersistenceEngine:
         self._conn.commit()
 
     @contextmanager
-    def transaction(self):
+    def transaction(self) -> Iterator[sqlite3.Cursor]:
         """事务上下文管理器。"""
         cursor = self._conn.cursor()
         try:

@@ -66,7 +66,7 @@ class Message:
 class MessageQueue:
     """带优先级的消息队列。"""
 
-    def __init__(self, max_size: int = 1000):
+    def __init__(self, max_size: int = 1000) -> None:
         if max_size < 1:
             raise ValueError("max_size 必须 >= 1")
         self.max_size = max_size
@@ -128,7 +128,7 @@ class MessageBus:
     5. 消息统计
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._queues: Dict[str, MessageQueue] = {}
         self._subscriptions: Dict[str, List[str]] = {}  # topic -> [agent_ids]
         self._stats: Dict[str, int] = {

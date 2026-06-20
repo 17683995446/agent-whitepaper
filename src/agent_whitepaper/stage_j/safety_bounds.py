@@ -81,7 +81,7 @@ class SafetyMonitor:
     6. 禁用动作：尝试执行被禁用的动作
     """
 
-    def __init__(self, config: Optional[SafetyConfig] = None):
+    def __init__(self, config: Optional[SafetyConfig] = None) -> None:
         self.config = config or SafetyConfig()
         self._consecutive_failures = 0
         self._negative_reward_streak = 0
@@ -286,7 +286,7 @@ class SafeActionFilter:
     3. 不安全则选择次优安全动作
     """
 
-    def __init__(self, monitor: SafetyMonitor):
+    def __init__(self, monitor: SafetyMonitor) -> None:
         self.monitor = monitor
 
     def filter(

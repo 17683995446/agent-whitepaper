@@ -236,7 +236,7 @@ class QTableKnowledgeBase:
     4. 为新Agent提供初始Q表
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._snapshots: Dict[str, QTableSnapshot] = {}
         self._index_by_contributor: Dict[str, List[str]] = {}
 

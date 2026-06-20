@@ -58,7 +58,7 @@ class ConfigLoader:
 
     ENV_PREFIX = "AGENTWP_"
 
-    def __init__(self, defaults: Optional[Dict[str, Any]] = None):
+    def __init__(self, defaults: Optional[Dict[str, Any]] = None) -> None:
         self.defaults = defaults or dict(DEFAULT_CONFIG)
 
     # --------------------------------------------------------

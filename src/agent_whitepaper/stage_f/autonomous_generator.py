@@ -74,7 +74,7 @@ class AutonomousTaskGenerator:
     4. 根据反馈调整难度
     """
 
-    def __init__(self, grid_size: int = 5, seed: Optional[int] = None):
+    def __init__(self, grid_size: int = 5, seed: Optional[int] = None) -> None:
         self.grid_size = grid_size
         self._rng = np.random.RandomState(seed)
         self.decomposer = TaskDecomposer(grid_size=grid_size)

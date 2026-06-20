@@ -98,7 +98,7 @@ class SubGoalStateMachine:
                             → (放弃) → SKIPPED → (下一个) → PENDING
     """
 
-    def __init__(self, max_retries: int = 3):
+    def __init__(self, max_retries: int = 3) -> None:
         if max_retries < 1:
             raise ValueError("max_retries 必须 >= 1")
         self.max_retries = max_retries
@@ -239,7 +239,7 @@ class LongTaskExecutor:
     5. 汇总结果
     """
 
-    def __init__(self, max_retries: int = 3):
+    def __init__(self, max_retries: int = 3) -> None:
         self.state_machine = SubGoalStateMachine(max_retries=max_retries)
 
     def execute_task(
@@ -263,7 +263,7 @@ class LongTaskExecutor:
         progress = self.state_machine.initialize(task)
 
         if state_extractor is None:
-            def state_extractor(obs, grid_size=5):
+            def state_extractor(obs: np.ndarray, grid_size: int = 5) -> Tuple[int, int]:
                 # 默认：从GridWorld观测提取agent位置
                 agent_part = obs[:grid_size * grid_size]
                 pos_idx = int(np.argmax(agent_part))

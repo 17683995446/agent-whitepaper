@@ -73,7 +73,7 @@ class SkillLibrary:
     支持按前置条件检索、按成功率排序、技能组合。
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._skills: Dict[str, Skill] = {}
         self._index_by_precondition: Dict[Tuple[int, ...], List[str]] = {}
 
@@ -153,7 +153,7 @@ class SkillAbstractor:
         max_n: int = 5,
         min_frequency: int = 3,
         min_success_rate: float = 0.5
-    ):
+    ) -> None:
         if min_n < 1 or max_n < min_n:
             raise ValueError("必须 1 <= min_n <= max_n")
         if min_frequency < 1:

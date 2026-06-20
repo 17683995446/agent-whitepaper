@@ -42,7 +42,7 @@ class DiscreteActionSpace:
     n: int
     action_names: Optional[tuple[str, ...]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.n < 1:
             raise ValueError(f"动作数量 n 必须 >= 1，收到 {self.n}")
         if self.action_names is not None and len(self.action_names) != self.n:
@@ -84,7 +84,7 @@ class ContinuousActionSpace:
     high: np.ndarray
     dim: int
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.low.shape != (self.dim,) or self.high.shape != (self.dim,):
             raise ValueError(
                 f"low/high 形状必须为 ({self.dim},)，"

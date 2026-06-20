@@ -100,7 +100,7 @@ class SystemOrchestrator:
     - stop(): 优雅停止
     """
 
-    def __init__(self, config: Optional[OrchestratorConfig] = None):
+    def __init__(self, config: Optional[OrchestratorConfig] = None) -> None:
         self.config = config or OrchestratorConfig()
         self.status = OrchestratorStatus.INITIALIZING
         self._should_stop = False

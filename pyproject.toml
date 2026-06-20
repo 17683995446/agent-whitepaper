@@ -103,3 +103,21 @@ testpaths = ["src/agent_whitepaper/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+
+# ---------------------------------------------------------------------------
+# Mypy 配置 - 类型注解规范化（阶段Q）
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.8"
+packages = ["agent_whitepaper"]
+exclude = ["archive/|tests/|demos/"]
+
+# 渐进式严格：先启用基本检查，不强制每个表达式都有类型
+strict = false
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true

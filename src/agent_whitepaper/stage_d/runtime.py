@@ -110,7 +110,7 @@ class PerpetualRuntime:
         8. 异常处理与恢复
     """
 
-    def __init__(self, config: Optional[RuntimeConfig] = None):
+    def __init__(self, config: Optional[RuntimeConfig] = None) -> None:
         self.config = config or RuntimeConfig()
         self.status = RuntimeStatus.INITIALIZING
         self.stats = RuntimeStats()
@@ -384,7 +384,7 @@ class PerpetualRuntime:
         self.initialize()
 
         # 注册信号处理（优雅停止）
-        def signal_handler(signum, frame):
+        def signal_handler(signum: int, frame: Any) -> None:
             self.stop("signal")
         try:
             signal.signal(signal.SIGINT, signal_handler)
