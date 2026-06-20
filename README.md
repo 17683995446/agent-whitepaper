@@ -120,6 +120,9 @@ agentwp plugins list
 # 查看插件详情
 agentwp plugins info --name logging
 
+# 启动交互式Shell（REPL）
+agentwp shell
+
 # 查看版本
 agentwp --version
 

@@ -36,6 +36,9 @@
     MetricsExportPlugin: 指标导出插件
     list_builtin_plugins: 列出内置插件
     create_plugin_manager: 创建插件管理器
+    InteractiveShell: 交互式Shell
+    run_shell: 启动交互式Shell
+    run_shell_with_commands: 非交互模式运行Shell命令
     build_parser: 构建CLI参数解析器
     main: CLI主入口
     cmd_init: init子命令
@@ -93,6 +96,7 @@ from .recovery import (
     format_error_message,
     suggest_fix,
 )
+from .shell import InteractiveShell, run_shell, run_shell_with_commands
 from .visualizer import Visualizer, generate_report, generate_report_from_orchestrator
 from .wizard import ConfigWizard, run_wizard
 
@@ -133,6 +137,9 @@ __all__ = [
     "BUILTIN_PLUGINS",
     "list_builtin_plugins",
     "create_plugin_manager",
+    "InteractiveShell",
+    "run_shell",
+    "run_shell_with_commands",
     "build_parser",
     "main",
     "cmd_init",

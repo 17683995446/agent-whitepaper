@@ -139,7 +139,7 @@ class TestDoctorExecution:
         with redirect_stdout(buf):
             cmd_doctor(args)
         output = buf.getvalue()
-        for cmd in ["init", "run", "demo", "status", "doctor", "wizard", "report", "plugins"]:
+        for cmd in ["init", "run", "demo", "status", "doctor", "wizard", "report", "plugins", "shell"]:
             assert f"agentwp {cmd}" in output
 
     def test_doctor_runs_functional_test(self):

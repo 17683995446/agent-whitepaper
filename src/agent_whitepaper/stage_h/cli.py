@@ -39,6 +39,7 @@ from .progress import (
     predict_phases,
 )
 from .recovery import format_error_message
+from .shell import InteractiveShell
 from .visualizer import generate_report_from_orchestrator
 from .wizard import ConfigWizard
 
@@ -455,7 +456,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     # 6. CLI子命令检查
     print("\nCLI 子命令:")
     parser = build_parser()
-    subcommands = ["init", "run", "demo", "status", "doctor", "wizard", "report", "plugins"]
+    subcommands = ["init", "run", "demo", "status", "doctor", "wizard", "report", "plugins", "shell"]
     for cmd in subcommands:
         # 检查子命令是否注册
         try:
@@ -616,6 +617,17 @@ def cmd_plugins(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_shell(args: argparse.Namespace) -> int:
+    """启动交互式Shell。
+
+    第一性原理：
+        "REPL is power"——交互式探索优于脚本编写。
+        Shell允许用户逐步运行、观察、调试系统。
+    """
+    shell = InteractiveShell()
+    return shell.run()
+
+
 # ============================================================
 # 主入口
 # ============================================================
@@ -766,6 +778,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="插件名（info操作时必需）"
     )
     p_plugins.set_defaults(func=cmd_plugins)
+
+    # shell
+    p_shell = subparsers.add_parser(
+        "shell", help="启动交互式Shell（REPL）"
+    )
+    p_shell.set_defaults(func=cmd_shell)
 
     return parser
 
