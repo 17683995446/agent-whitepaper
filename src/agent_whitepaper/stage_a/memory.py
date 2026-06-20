@@ -19,6 +19,8 @@ from typing import List, Tuple
 
 import numpy as np
 
+from agent_whitepaper._protocols import MemoryProtocol
+
 from .environment import Transition
 
 
@@ -58,7 +60,7 @@ class Episode:
 # ============================================================
 # 情节记忆缓冲（环形缓冲）
 # ============================================================
-class EpisodicBuffer:
+class EpisodicBuffer(MemoryProtocol):
     """情节记忆缓冲区。
 
     存储最近 capacity 个转移，支持：
@@ -66,6 +68,8 @@ class EpisodicBuffer:
     - 均匀随机采样
     - 优先级采样（基于TD误差）
     - 提取完整情节
+
+    实现 MemoryProtocol 接口，可被任何满足该协议的记忆后端替换。
     """
 
     def __init__(self, capacity: int = 10000) -> None:

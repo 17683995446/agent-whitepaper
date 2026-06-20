@@ -46,6 +46,7 @@ from ._exceptions import (
     StateSerializationError,
     TransactionError,
 )
+from ._protocols import AgentProtocol, MemoryProtocol, PolicyProtocol
 from .stage_a import GridWorld, QTable, SelfDrivenAgent
 from .stage_b import MetaLearner, Skill, SkillLibrary, TaskDecomposer
 from .stage_c import AgentRegistry, CoalitionFormer, MessageBus
@@ -131,6 +132,10 @@ __all__ = [
     "CheckpointError",
     "RecoveryError",
     "CLIError",
+    # 抽象接口（阶段S）
+    "PolicyProtocol",
+    "MemoryProtocol",
+    "AgentProtocol",
 ]
 
 __version__ = "0.1.0"

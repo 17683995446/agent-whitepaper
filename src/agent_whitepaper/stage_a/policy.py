@@ -20,17 +20,21 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from agent_whitepaper._protocols import PolicyProtocol
+
 from .action_space import DiscreteActionSpace
 
 
 # ============================================================
 # Q表（简单表格法Q-learning）
 # ============================================================
-class QTable:
+class QTable(PolicyProtocol):
     """Q值表。
 
     对于离散状态空间较小的情况，表格法比神经网络更可靠。
     状态用离散索引表示（如GridWorld的格子编号）。
+
+    实现 PolicyProtocol 接口，可被任何满足该协议的策略后端替换。
     """
 
     def __init__(self, n_states: int, n_actions: int, learning_rate: float = 0.1) -> None:

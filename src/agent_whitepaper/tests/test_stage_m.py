@@ -95,8 +95,9 @@ class TestTopLevelPackage:
         ]:
             sub_alls[sub.__name__] = set(sub.__all__)
         # 基础模块（非阶段）也是合法的导出来源
-        from agent_whitepaper import _exceptions
+        from agent_whitepaper import _exceptions, _protocols
         sub_alls["_exceptions"] = set(_exceptions.__all__)
+        sub_alls["_protocols"] = set(_protocols.__all__)
 
         for name in agent_whitepaper.__all__:
             found = any(name in s for s in sub_alls.values())

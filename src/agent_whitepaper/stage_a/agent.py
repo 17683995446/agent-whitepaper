@@ -20,6 +20,8 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 
+from agent_whitepaper._protocols import AgentProtocol
+
 from .action_space import DiscreteActionSpace
 from .environment import Environment, Transition
 from .memory import Episode, EpisodicBuffer
@@ -70,7 +72,7 @@ class AgentStats:
 # ============================================================
 # 自驱Agent
 # ============================================================
-class SelfDrivenAgent:
+class SelfDrivenAgent(AgentProtocol):
     """自驱Agent：感知-推断-决策-行动-学习的完整闭环。
 
     核心特性：
@@ -78,6 +80,8 @@ class SelfDrivenAgent:
     2. 学习：通过Q-learning从记忆中学习最优策略
     3. 适应：驱力根据自由能和奖励动态调整
     4. 记忆：情节记忆缓冲存储经历，支持优先级回放
+
+    实现 AgentProtocol 接口，可被任何满足该协议的Agent后端替换。
     """
 
     def __init__(

@@ -138,6 +138,8 @@ from agent_whitepaper import (
     # 异常层次体系
     AgentWhitepaperError, ConfigError, PersistenceError,
     ComponentError, RecoveryError, CLIError,
+    # 抽象接口
+    PolicyProtocol, MemoryProtocol, AgentProtocol,
 )
 ```
 
@@ -178,6 +180,23 @@ AgentWhitepaperError
 - **防火墙层**（主循环、Agent隔离）：`except Exception`（永续运行保障）
 - **组件层**（技能抽象、元学习等）：`except Exception` + 降级注释
 - **边界层**（CLI、DB）：`except` 具体标准库异常
+
+## 抽象接口
+
+系统在 `_protocols.py` 中定义核心抽象接口（阶段S），实现接口分离=可替换性：
+
+| 接口 | 定义位置 | 具体实现 | 契约方法 |
+|------|----------|----------|----------|
+| `EnvironmentProtocol` | stage_i | GridWorld, FunctionCallEnvironment | reset/step/action_space/observation_dim/n_states |
+| `StateEncoder` | stage_i | GridWorldStateEncoder, BitmapStateEncoder | encode/n_states |
+| `PolicyProtocol` | _protocols | QTable | get/best_action/update |
+| `MemoryProtocol` | _protocols | EpisodicBuffer | add/sample/get_recent_episodes/\_\_len\_\_ |
+| `AgentProtocol` | _protocols | SelfDrivenAgent | perceive_and_act/run_episode |
+
+设计原则：
+- **接口分离**：高层模块依赖抽象，不依赖具体实现
+- **可替换性**：任何满足接口的实现都可替换（如 QTable → 神经网络策略）
+- **可测试性**：测试可 mock 接口而非依赖具体实现
 
 ## 依赖关系
 

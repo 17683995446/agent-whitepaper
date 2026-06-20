@@ -15,6 +15,7 @@
     - 用于验证Agent能否"自驱学会"到达目标
 """
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
@@ -26,31 +27,32 @@ from .action_space import ActionSpace, DiscreteActionSpace
 # ============================================================
 # 环境接口（抽象基类）
 # ============================================================
-@dataclass
-class Environment:
+class Environment(ABC):
     """环境抽象基类。
 
-    环境是有状态的（状态随step改变），因此使用可变dataclass。
-    但每次step返回不可变的Transition，保证历史可追溯。
+    环境是有状态的（状态随step改变）。
+    每次step返回不可变的Transition，保证历史可追溯。
+
+    子类必须实现：reset/step/action_space/observation_dim。
     """
 
+    @abstractmethod
     def reset(self, seed: Optional[int] = None) -> np.ndarray:
         """重置环境到初始状态，返回初始观测。"""
-        raise NotImplementedError
 
-    def step(self, action) -> Tuple[np.ndarray, float, bool, dict]:
+    @abstractmethod
+    def step(self, action: int) -> Tuple[np.ndarray, float, bool, dict]:
         """执行动作，返回 (observation, reward, done, info)。"""
-        raise NotImplementedError
 
     @property
+    @abstractmethod
     def action_space(self) -> ActionSpace:
         """返回动作空间。"""
-        raise NotImplementedError
 
     @property
+    @abstractmethod
     def observation_dim(self) -> int:
         """观测维度。"""
-        raise NotImplementedError
 
 
 # ============================================================
