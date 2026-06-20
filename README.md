@@ -65,6 +65,43 @@ agentwp run --config config.yaml
 
 # 查询运行状态
 agentwp status --db agent_system.db
+
+# 查看版本
+agentwp --version
+
+# 详细日志模式
+agentwp --verbose demo -n 50
+```
+
+### 演示入口
+
+系统提供三种演示方式，适用于不同场景：
+
+| 演示方式 | 命令 | 适用场景 | 迭代数 |
+|---------|------|---------|--------|
+| CLI 快速演示 | `agentwp demo` | 快速验证系统能力 | 30（可配置） |
+| 端到端演示 | `python -m agent_whitepaper.demos.e2e_demo` | 验证三大核心能力 | 按能力分步 |
+| 长时运行实证 | 见下方代码 | 验证持续进化能力 | 100+ |
+
+**CLI 快速演示**（可参数化）:
+```bash
+# 自定义参数：5轮迭代，2个Agent，4x4网格
+agentwp demo -n 5 -a 2 -g 4
+```
+
+**端到端演示**（三大能力闭环）:
+```bash
+python -m agent_whitepaper.demos.e2e_demo
+```
+验证：1) 自驱长任务 2) 技能增强 3) 多Agent协作
+
+**长时运行实证**:
+```python
+from agent_whitepaper import LongRunDemo
+
+demo = LongRunDemo()  # 默认100轮迭代
+result = demo.run()
+print(f"最终成功率: {result.final_success_rate:.1%}")
 ```
 
 ## 架构总览
